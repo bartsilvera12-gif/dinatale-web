@@ -340,6 +340,18 @@ const ProductsSection = ({ products, setProducts, loading }) => {
     }
   };
 
+  const toggleFeatured = async (p) => {
+    const next = !p.is_featured;
+    try {
+      await window.updateDNProduct(p.id, { is_featured: next });
+      const updated = products.map((x) => x.id === p.id ? { ...x, is_featured: next } : x);
+      setProducts(updated);
+      window.PRODUCTS = updated;
+    } catch(e) {
+      alert("Error al actualizar destacado. Reintentá.");
+    }
+  };
+
   const saveEdit = async (id) => {
     setSaving(true); setSaveErr(null);
     try {
@@ -476,7 +488,7 @@ const ProductsSection = ({ products, setProducts, loading }) => {
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
             <thead>
               <tr style={{ background: "var(--c-rose-50)", borderBottom: "1.5px solid var(--c-border-soft)" }}>
-                {["Producto", "Categoría", "Precio", "Stock", "Tag", "Rating", ""].map((h, i) => (
+                {["Producto", "Categoría", "Precio", "Stock", "Tag", "Rating", "Dest.", ""].map((h, i) => (
                   <th key={i} style={{ padding: "13px 16px", textAlign: "left", fontWeight: 600, fontSize: 11.5, color: "var(--c-mute)", letterSpacing: ".06em", whiteSpace: "nowrap" }}>{h}</th>
                 ))}
               </tr>
@@ -546,6 +558,13 @@ const ProductsSection = ({ products, setProducts, loading }) => {
                     </td>
                     <td style={{ padding: "10px 12px", color: "#F59E0B", fontWeight: 700, whiteSpace: "nowrap" }}>
                       ⭐ {p.rating} <span style={{ color: "var(--c-mute)", fontWeight: 400, fontSize: 12 }}>({p.reviews})</span>
+                    </td>
+                    <td style={{ padding: "10px 12px", textAlign: "center" }}>
+                      <button onClick={() => toggleFeatured(p)} title={p.is_featured ? "Quitar de destacados" : "Marcar como destacado"}
+                        style={{ background: "none", border: "none", cursor: "pointer", padding: 4, fontSize: 18, lineHeight: 1, opacity: p.is_featured ? 1 : 0.25, transition: "opacity .2s, transform .15s" }}
+                        onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.25)"}
+                        onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
+                      >⭐</button>
                     </td>
                     <td style={{ padding: "10px 12px", whiteSpace: "nowrap" }}>
                       {saveErr && isEdit && <div style={{ color: "var(--c-danger)", fontSize: 11, marginBottom: 4 }}>{saveErr}</div>}

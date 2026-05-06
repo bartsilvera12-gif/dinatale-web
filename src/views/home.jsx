@@ -3,22 +3,27 @@ const HomeView = () => {
   const perPage = 4;
   const [featPage, setFeatPage] = React.useState(0);
   const [featDir, setFeatDir] = React.useState(1);
-  const featPages = Math.ceil(PRODUCTS.length / perPage);
+  const [featPaused, setFeatPaused] = React.useState(false);
+  const featProds = PRODUCTS.filter((p) => p.is_featured).length > 0
+    ? PRODUCTS.filter((p) => p.is_featured)
+    : PRODUCTS;
+  const featPages = Math.ceil(featProds.length / perPage);
 
   React.useEffect(() => {
-    if (featPages <= 1) return;
+    if (featPages <= 1 || featPaused) return;
     const t = setInterval(() => {
       setFeatDir(1);
       setFeatPage((p) => (p + 1) % featPages);
     }, 4500);
     return () => clearInterval(t);
-  }, [featPages]);
+  }, [featPages, featPaused]);
 
   const goFeat = (next) => {
+    setFeatPaused(true);
     setFeatDir(next >= featPage ? 1 : -1);
     setFeatPage(next);
   };
-  const featSlice = PRODUCTS.slice(featPage * perPage, featPage * perPage + perPage);
+  const featSlice = featProds.slice(featPage * perPage, featPage * perPage + perPage);
 
   return (
     <div className="view-fade">
@@ -163,29 +168,39 @@ const HomeView = () => {
           <button className="ulink" onClick={() => setRoute("products")} style={{ background: "none", border: "none", padding: 0, cursor: "pointer", fontSize: 14 }}>Ver catálogo completo →</button>
         </div>
 
-        <div style={{ overflow: "hidden" }}>
-          <div key={featPage} className="feat-grid" style={{ display: "grid", gap: 20, gridTemplateColumns: "repeat(4, minmax(0, 1fr))", animation: featDir >= 0 ? "featSlideR 0.42s ease" : "featSlideL 0.42s ease" }}>
-            {featSlice.map((p) => (
-              <window.ProductCard key={p.id} product={p} onQuick={setQuickView} />
-            ))}
+        <div style={{ position: "relative" }}>
+          {featPages > 1 && (
+            <button onClick={() => goFeat((featPage - 1 + featPages) % featPages)}
+              style={{ position: "absolute", left: -22, top: "50%", transform: "translateY(-50%)", zIndex: 2, width: 40, height: 40, borderRadius: "50%", border: "none", background: "var(--c-primary)", color: "white", cursor: "pointer", display: "grid", placeItems: "center", boxShadow: "0 4px 14px rgba(232,77,163,0.35)", transition: "transform .2s, box-shadow .2s" }}
+              onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-50%) scale(1.1)"; e.currentTarget.style.boxShadow = "0 6px 20px rgba(232,77,163,0.5)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(-50%) scale(1)"; e.currentTarget.style.boxShadow = "0 4px 14px rgba(232,77,163,0.35)"; }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+          )}
+
+          <div style={{ overflow: "hidden" }}>
+            <div key={featPage} className="feat-grid" style={{ display: "grid", gap: 20, gridTemplateColumns: "repeat(4, minmax(0, 1fr))", animation: featDir >= 0 ? "featSlideR 0.42s ease" : "featSlideL 0.42s ease" }}>
+              {featSlice.map((p) => (
+                <window.ProductCard key={p.id} product={p} onQuick={setQuickView} />
+              ))}
+            </div>
           </div>
+
+          {featPages > 1 && (
+            <button onClick={() => goFeat((featPage + 1) % featPages)}
+              style={{ position: "absolute", right: -22, top: "50%", transform: "translateY(-50%)", zIndex: 2, width: 40, height: 40, borderRadius: "50%", border: "none", background: "var(--c-primary)", color: "white", cursor: "pointer", display: "grid", placeItems: "center", boxShadow: "0 4px 14px rgba(232,77,163,0.35)", transition: "transform .2s, box-shadow .2s" }}
+              onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-50%) scale(1.1)"; e.currentTarget.style.boxShadow = "0 6px 20px rgba(232,77,163,0.5)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(-50%) scale(1)"; e.currentTarget.style.boxShadow = "0 4px 14px rgba(232,77,163,0.35)"; }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          )}
         </div>
 
         {featPages > 1 && (
-          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 14, marginTop: 28 }}>
-            <button onClick={() => goFeat((featPage - 1 + featPages) % featPages)}
-              style={{ width: 38, height: 38, borderRadius: "50%", border: "1.5px solid var(--c-border)", background: "white", cursor: "pointer", display: "grid", placeItems: "center", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", transition: "box-shadow .2s" }}>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--c-ink)" strokeWidth="2.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>
-            </button>
-            <div style={{ display: "flex", gap: 6 }}>
-              {Array.from({ length: featPages }).map((_, i) => (
-                <button key={i} onClick={() => goFeat(i)} style={{ width: i === featPage ? 22 : 7, height: 7, borderRadius: 99, border: "none", cursor: "pointer", padding: 0, background: i === featPage ? "var(--c-primary)" : "var(--c-border)", transition: "all .3s ease" }} />
-              ))}
-            </div>
-            <button onClick={() => goFeat((featPage + 1) % featPages)}
-              style={{ width: 38, height: 38, borderRadius: "50%", border: "1.5px solid var(--c-border)", background: "white", cursor: "pointer", display: "grid", placeItems: "center", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", transition: "box-shadow .2s" }}>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--c-ink)" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6"/></svg>
-            </button>
+          <div style={{ display: "flex", justifyContent: "center", gap: 6, marginTop: 20 }}>
+            {Array.from({ length: featPages }).map((_, i) => (
+              <button key={i} onClick={() => goFeat(i)} style={{ width: i === featPage ? 22 : 7, height: 7, borderRadius: 99, border: "none", cursor: "pointer", padding: 0, background: i === featPage ? "var(--c-primary)" : "var(--c-border)", transition: "all .3s ease" }} />
+            ))}
           </div>
         )}
       </section>

@@ -67,7 +67,9 @@ const Footer = () => {
 
         <div style={{ marginTop: 60, paddingTop: 24, borderTop: "1px solid var(--c-border-soft)", display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 12, alignItems: "center" }}>
           <p style={{ fontSize: 12.5, color: "var(--c-mute)", margin: 0 }}>© 2026 DI NATALE. Belleza, estética y cuidado personal. Todos los derechos reservados.</p>
-          <p style={{ fontSize: 12.5, color: "var(--c-mute)", margin: 0 }}>Diseñado con cuidado · Asunción</p>
+          <p style={{ fontSize: 12.5, color: "var(--c-mute)", margin: 0 }}>
+            Diseñado con cuidado · Asunción · Desarrollado por <a href="https://neura.com.py" target="_blank" rel="noreferrer" style={{ color: "var(--c-primary)", textDecoration: "none", fontWeight: 600 }}>Neura</a>
+          </p>
         </div>
       </div>
     </footer>

@@ -9,7 +9,7 @@ const WhatsAppFAB = () => {
   return (
     <React.Fragment>
       {open && (
-        <div style={{ position: "fixed", bottom: 110, right: 24, zIndex: 70, animation: "viewFade 220ms ease both" }}>
+        <div style={{ position: "fixed", bottom: 150, right: 24, zIndex: 70, animation: "viewFade 220ms ease both" }}>
           <div className="card" style={{ padding: 16, width: 280, background: "white" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
               <div style={{ width: 36, height: 36, borderRadius: "50%", background: "#25D366", display: "grid", placeItems: "center" }}>
@@ -34,7 +34,7 @@ const WhatsAppFAB = () => {
         </div>
       )}
       <button onClick={() => setOpen((o) => !o)} aria-label="WhatsApp"
-        style={{ position: "fixed", bottom: 24, right: 24, zIndex: 70, width: 60, height: 60, borderRadius: "50%", border: "none", background: "#25D366", color: "white", cursor: "pointer", boxShadow: "0 8px 24px -6px rgba(37,211,102,0.5), 0 4px 10px -4px rgba(31,23,32,0.15)", display: "grid", placeItems: "center", transition: "transform .25s ease" }}
+        style={{ position: "fixed", bottom: 80, right: 24, zIndex: 70, width: 60, height: 60, borderRadius: "50%", border: "none", background: "#25D366", color: "white", cursor: "pointer", boxShadow: "0 8px 24px -6px rgba(37,211,102,0.5), 0 4px 10px -4px rgba(31,23,32,0.15)", display: "grid", placeItems: "center", transition: "transform .25s ease" }}
         onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.06)"}
         onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}>
         <window.Icon name={open ? "close" : "wa"} size={26} color="white" />

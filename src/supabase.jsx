@@ -49,8 +49,9 @@ const mapProduct = (p) => ({
   desc:     p.description || "",
   benefits: p.benefits || [],
   use:      p.use_instructions || "",
-  images:   p.images && p.images.length ? p.images : [],
-  is_active: p.is_active
+  images:      p.images && p.images.length ? p.images : [],
+  is_active:   p.is_active,
+  is_featured: p.is_featured || false
 });
 
 /* ── Cargar productos desde dinatale.products ──────────────── */
@@ -134,15 +135,14 @@ const deleteDNProduct = async (id) => {
 };
 
 /* ── Actualizar producto en Supabase (admin) ───────────────── */
-const updateDNProduct = async (id, { price, stock, tag, oldPrice, images }) => {
-  const body = {
-    price,
-    stock,
-    tag:       tag || null,
-    old_price: oldPrice || null,
-    updated_at: new Date().toISOString()
-  };
-  if (images !== undefined) body.images = images;
+const updateDNProduct = async (id, { price, stock, tag, oldPrice, images, is_featured }) => {
+  const body = { updated_at: new Date().toISOString() };
+  if (price      !== undefined) body.price      = price;
+  if (stock      !== undefined) body.stock      = stock;
+  if (tag        !== undefined) body.tag        = tag || null;
+  if (oldPrice   !== undefined) body.old_price  = oldPrice || null;
+  if (images     !== undefined) body.images     = images;
+  if (is_featured !== undefined) body.is_featured = is_featured;
   return sbPatch("dn_products", `id=eq.${id}`, body);
 };
 
