@@ -12,7 +12,7 @@ const HomeView = () => {
         <window.FloralAccent style={{ bottom: 40, left: "30%" }} size={140} color="#E84DA3" />
 
         <div className="container dn-hero" style={{ paddingTop: 60, paddingBottom: 40, display: "grid", gap: 60, alignItems: "center", gridTemplateColumns: "minmax(0, 1.05fr) minmax(0, 1fr)" }}>
-          <div style={{ paddingLeft: "clamp(16px, 4vw, 56px)" }}>
+          <div>
             <div className="eyebrow" style={{ marginBottom: 22 }}>Curado en Asunción · Asesoría profesional</div>
             <h1 className="h-display" style={{ fontSize: "clamp(40px, 6.6vw, 78px)", fontWeight: 400, margin: "0 0 20px" }}>
               Belleza, estética y bienestar en una <em>experiencia premium.</em>
