@@ -4,8 +4,5 @@
       "source": "/(.*)\\.jsx",
       "headers": [{ "key": "Content-Type", "value": "application/javascript" }]
     }
-  ],
-  "rewrites": [
-    { "source": "/((?!assets|src|tweaks).*)", "destination": "/index.html" }
   ]
 }
