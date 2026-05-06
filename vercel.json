@@ -1,5 +1,11 @@
 {
+  "headers": [
+    {
+      "source": "/(.*)\\.jsx",
+      "headers": [{ "key": "Content-Type", "value": "application/javascript" }]
+    }
+  ],
   "rewrites": [
-    { "source": "/((?!assets/).*)", "destination": "/index.html" }
+    { "source": "/((?!assets|src|tweaks).*)", "destination": "/index.html" }
   ]
 }
