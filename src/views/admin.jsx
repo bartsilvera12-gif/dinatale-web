@@ -169,6 +169,8 @@ const ProductsSection = ({ products, setProducts, loading }) => {
   const [saved, setSaved] = React.useState(null);
   const [saving, setSaving] = React.useState(false);
   const [saveErr, setSaveErr] = React.useState(null);
+  const [confirmDelete, setConfirmDelete] = React.useState(null);
+  const [deleting, setDeleting] = React.useState(false);
 
   const filtered = products.filter((p) => {
     const matchQ   = !search.trim() || p.name.toLowerCase().includes(search.toLowerCase());
@@ -178,6 +180,21 @@ const ProductsSection = ({ products, setProducts, loading }) => {
 
   const startEdit = (p) => { setEditing(p.id); setEditData({ price: p.price, stock: p.stock, tag: p.tag ?? "", oldPrice: p.oldPrice ?? "" }); };
   const cancelEdit = () => { setEditing(null); setEditData({}); setSaveErr(null); };
+
+  const deleteProduct = async (id) => {
+    setDeleting(true);
+    try {
+      await window.deleteDNProduct(id);
+      const updated = products.filter((p) => p.id !== id);
+      setProducts(updated);
+      window.PRODUCTS = updated;
+      setConfirmDelete(null);
+    } catch(e) {
+      alert("Error al eliminar el producto. Reintentá.");
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   const saveEdit = async (id) => {
     setSaving(true); setSaveErr(null);
@@ -225,6 +242,27 @@ const ProductsSection = ({ products, setProducts, loading }) => {
           {window.CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
         </select>
       </div>
+
+      {confirmDelete && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 300, background: "rgba(31,23,32,0.45)", display: "grid", placeItems: "center", padding: 20 }}
+             onClick={() => !deleting && setConfirmDelete(null)}>
+          <div style={{ background: "white", borderRadius: 20, padding: "36px 32px", maxWidth: 400, width: "100%", boxShadow: "0 20px 60px rgba(0,0,0,0.2)" }}
+               onClick={(e) => e.stopPropagation()}>
+            <div style={{ fontSize: 36, marginBottom: 12, textAlign: "center" }}>🗑️</div>
+            <h3 style={{ fontFamily: "var(--ff-serif)", fontSize: 22, margin: "0 0 10px", textAlign: "center" }}>¿Eliminar producto?</h3>
+            <p style={{ color: "var(--c-mute)", fontSize: 14, textAlign: "center", margin: "0 0 24px", lineHeight: 1.5 }}>
+              <strong>{confirmDelete.name}</strong> será eliminado permanentemente de la base de datos.
+            </p>
+            <div style={{ display: "flex", gap: 10 }}>
+              <button onClick={() => setConfirmDelete(null)} disabled={deleting} className="btn btn--ghost btn--block">Cancelar</button>
+              <button onClick={() => deleteProduct(confirmDelete.id)} disabled={deleting}
+                style={{ flex: 1, padding: "12px 0", borderRadius: 999, background: "var(--c-danger)", color: "white", border: "none", fontWeight: 600, fontSize: 14, cursor: "pointer", fontFamily: "inherit" }}>
+                {deleting ? "Eliminando..." : "Sí, eliminar"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="card" style={{ padding: 0, overflow: "hidden" }}>
         <div style={{ overflowX: "auto" }}>
@@ -299,9 +337,11 @@ const ProductsSection = ({ products, setProducts, loading }) => {
                             <button onClick={() => saveEdit(p.id)} disabled={saving} className="btn btn--primary btn--sm" style={{ padding: "6px 12px", fontSize: 12 }}>{saving ? "..." : "Guardar"}</button>
                             <button onClick={cancelEdit} className="btn btn--ghost btn--sm" style={{ padding: "6px 10px", fontSize: 12 }}>✕</button>
                           </div>
-                        : isSaved
-                          ? <span style={{ color: "var(--c-success)", fontSize: 12, fontWeight: 700 }}>✓ Guardado</span>
-                          : <button onClick={() => startEdit(p)} className="btn btn--ghost btn--sm">Editar</button>
+                        : <div style={{ display: "flex", gap: 5, alignItems: "center" }}>
+                            {isSaved && <span style={{ color: "var(--c-success)", fontSize: 12, fontWeight: 700, marginRight: 4 }}>✓</span>}
+                            <button onClick={() => startEdit(p)} className="btn btn--ghost btn--sm" style={{ padding: "6px 12px", fontSize: 12 }}>Editar</button>
+                            <button onClick={() => setConfirmDelete(p)} className="btn btn--sm" style={{ padding: "6px 10px", fontSize: 12, background: "#FEE2E2", color: "#991B1B", border: "none", borderRadius: 8, cursor: "pointer" }} title="Eliminar producto">🗑</button>
+                          </div>
                       }
                     </td>
                   </tr>

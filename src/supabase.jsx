@@ -83,6 +83,14 @@ const loadDNCategories = async () => {
   }
 };
 
+/* ── Eliminar producto en Supabase (admin) ─────────────────── */
+const deleteDNProduct = async (id) => {
+  const res = await fetch(`${DN_SUPABASE_URL}/rest/v1/dn_products?id=eq.${id}`, {
+    method: "DELETE", headers: sbHeaders(true)
+  });
+  if (!res.ok) throw new Error(`DELETE dn_products: ${res.status}`);
+};
+
 /* ── Actualizar producto en Supabase (admin) ───────────────── */
 const updateDNProduct = async (id, { price, stock, tag, oldPrice }) => {
   return sbPatch("dn_products", `id=eq.${id}`, {
@@ -205,6 +213,6 @@ window.__sbLoadDNData = async () => {
 Object.assign(window, {
   sbGet, sbPatch, sbPost,
   loadDNProducts, loadDNCategories, loadDNReviews, loadDNArticles, loadDNFaqs,
-  updateDNProduct, saveDNOrder, loadDNOrders,
+  updateDNProduct, deleteDNProduct, saveDNOrder, loadDNOrders,
   mapProduct
 });
