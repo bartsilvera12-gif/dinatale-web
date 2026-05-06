@@ -1,8 +1,11 @@
 {
-  "headers": [
+  "routes": [
     {
-      "source": "/(.*)\\.jsx",
-      "headers": [{ "key": "Content-Type", "value": "application/javascript" }]
-    }
+      "src": "/(.*)\\.jsx$",
+      "headers": { "Content-Type": "application/javascript" },
+      "continue": true
+    },
+    { "handle": "filesystem" },
+    { "src": "/.*", "dest": "/index.html" }
   ]
 }
