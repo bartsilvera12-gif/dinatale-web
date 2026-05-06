@@ -5,17 +5,25 @@ const StoreCtx = createContext(null);
 
 const useStore = () => useContext(StoreCtx);
 
+const parseHash = () => {
+  try {
+    const h = window.location.hash.replace(/^#/, "");
+    if (h.startsWith("/product/")) return { name: "product", params: { id: h.split("/")[2] } };
+    const map = { "/products": "products", "/categories": "categories", "/blog": "blog", "/reviews": "reviews", "/faq": "faq", "/about": "about", "/cart": "cart", "/checkout": "checkout", "/admin": "admin" };
+    if (map[h]) return { name: map[h], params: {} };
+  } catch (e) {}
+  return { name: "home", params: {} };
+};
+
 const StoreProvider = ({ children }) => {
   // Route: { name, params }
-  const [route, setRouteState] = useState(() => {
-    try {
-      const h = window.location.hash.replace(/^#/, "");
-      if (h.startsWith("/product/")) return { name: "product", params: { id: h.split("/")[2] } };
-      const map = { "/products": "products", "/categories": "categories", "/blog": "blog", "/reviews": "reviews", "/faq": "faq", "/about": "about", "/cart": "cart", "/checkout": "checkout", "/admin": "admin" };
-      if (map[h]) return { name: map[h], params: {} };
-    } catch (e) {}
-    return { name: "home", params: {} };
-  });
+  const [route, setRouteState] = useState(parseHash);
+
+  useEffect(() => {
+    const onHash = () => setRouteState(parseHash());
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
+  }, []);
 
   const setRoute = useCallback((name, params = {}) => {
     setRouteState({ name, params });
