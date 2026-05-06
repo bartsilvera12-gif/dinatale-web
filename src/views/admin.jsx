@@ -400,11 +400,10 @@ const ProductsSection = ({ products, setProducts, loading }) => {
           <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar producto..."
             style={{ width: "100%", boxSizing: "border-box", padding: "11px 14px 11px 38px", borderRadius: 10, border: "1.5px solid var(--c-border)", fontSize: 13, outline: "none", fontFamily: "inherit" }} />
         </div>
-        <select value={filterCat} onChange={(e) => setFilterCat(e.target.value)}
-          style={{ padding: "11px 14px", borderRadius: 10, border: "1.5px solid var(--c-border)", fontSize: 13, fontFamily: "inherit", outline: "none", background: "white" }}>
+        <AdmSelect value={filterCat} onChange={(e) => setFilterCat(e.target.value)} style={{ minWidth: 180 }}>
           <option value="all">Todas las categorías</option>
           {window.CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-        </select>
+        </AdmSelect>
       </div>
 
       {showNew && (

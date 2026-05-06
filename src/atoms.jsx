@@ -220,4 +220,69 @@ const QuickView = () => {
   );
 };
 
-Object.assign(window, { Stars, SectionTitle, FloralAccent, Tag, ProductCard, CategoryCard, ReviewCard, BlogCard, Toast, QuickView });
+const DNSelect = ({ value, onChange, children, style }) => {
+  const [open, setOpen] = React.useState(false);
+  const ref = React.useRef(null);
+  const options = React.Children.map(children, (c) => ({ value: c.props.value, label: c.props.children }));
+  const selected = options.find((o) => String(o.value) === String(value)) || options[0];
+
+  React.useEffect(() => {
+    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const pick = (opt) => { onChange({ target: { value: opt.value } }); setOpen(false); };
+
+  return (
+    <div ref={ref} style={{ position: "relative", userSelect: "none", ...style }}>
+      <button type="button" onClick={() => setOpen((v) => !v)} style={{
+        width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between",
+        padding: "10px 14px", borderRadius: 10, cursor: "pointer", fontFamily: "inherit",
+        fontSize: 14, color: "var(--c-ink)", background: "white", textAlign: "left",
+        border: open ? "1.5px solid var(--c-primary)" : "1.5px solid var(--c-border)",
+        boxShadow: open ? "0 0 0 3px rgba(232,77,163,0.10)" : "none",
+        transition: "border-color .2s, box-shadow .2s", whiteSpace: "nowrap"
+      }}>
+        <span>{selected?.label}</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--c-mute)" strokeWidth="2.5" strokeLinecap="round"
+          style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .2s", flexShrink: 0, marginLeft: 8 }}>
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </button>
+      {open && (
+        <div style={{
+          position: "absolute", top: "calc(100% + 6px)", left: 0, right: 0, zIndex: 999,
+          background: "white", borderRadius: 14, padding: "6px",
+          border: "1.5px solid var(--c-border)",
+          boxShadow: "0 12px 40px -8px rgba(200,38,138,0.15), 0 4px 12px rgba(0,0,0,0.08)",
+          animation: "dnDropIn 0.15s ease", minWidth: "100%"
+        }}>
+          {options.map((opt) => {
+            const isSel = String(opt.value) === String(value);
+            return (
+              <div key={opt.value} onClick={() => pick(opt)} style={{
+                padding: "10px 14px", cursor: "pointer", fontSize: 14, borderRadius: 9,
+                display: "flex", alignItems: "center", justifyContent: "space-between",
+                color: isSel ? "var(--c-primary-deep)" : "var(--c-ink)",
+                fontWeight: isSel ? 600 : 400, transition: "background .12s"
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = "var(--c-rose-50)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}>
+                <span>{opt.label}</span>
+                {isSel && (
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--c-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+      <style>{`@keyframes dnDropIn { from { opacity:0; transform:translateY(-6px) } to { opacity:1; transform:none } }`}</style>
+    </div>
+  );
+};
+
+Object.assign(window, { Stars, SectionTitle, FloralAccent, Tag, ProductCard, CategoryCard, ReviewCard, BlogCard, Toast, QuickView, DNSelect });

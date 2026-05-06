@@ -40,13 +40,13 @@ const ProductsView = () => {
           <window.Icon name="search" size={16} color="var(--c-mute)" />
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar productos..." style={{ flex: 1, border: "none", outline: "none", background: "transparent", fontSize: 14, fontFamily: "inherit" }} />
         </div>
-        <select className="select" value={sort} onChange={(e) => setSort(e.target.value)} style={{ width: "auto", padding: "10px 14px" }}>
+        <window.DNSelect value={sort} onChange={(e) => setSort(e.target.value)} style={{ minWidth: 200 }}>
           <option value="featured">Destacados</option>
           <option value="new">Más nuevos</option>
           <option value="top">Más vendidos</option>
           <option value="price-asc">Precio: menor a mayor</option>
           <option value="price-desc">Precio: mayor a menor</option>
-        </select>
+        </window.DNSelect>
       </div>
 
       <div style={{ display: "flex", gap: 8, marginBottom: 32, flexWrap: "wrap" }}>
