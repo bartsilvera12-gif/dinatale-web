@@ -17,7 +17,7 @@ const Footer = () => {
         <div style={{ display: "grid", gap: 48, gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
-              <img src="assets/logo.jpeg" alt="DI Natale" style={{ height: 64, width: "auto", objectFit: "contain", mixBlendMode: "multiply" }} />
+              <img src="assets/logosinfondo.png" alt="DI Natale" style={{ height: 64, width: "auto", objectFit: "contain" }} />
               <span style={{ fontSize: 11, letterSpacing: "0.16em", color: "var(--c-mute)", textTransform: "uppercase", fontFamily: "var(--ff-body)" }}>by Letizia</span>
             </div>
             <p style={{ color: "var(--c-mute)", fontSize: 14, lineHeight: 1.7, maxWidth: 320, marginTop: 0 }}>
