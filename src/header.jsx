@@ -37,7 +37,7 @@ const Header = () => {
         <div className="container" style={{ display: "flex", alignItems: "center", gap: 24, height: 76 }}>
           <button onClick={() => go("home")} aria-label="Inicio" style={{ background: "none", border: "none", padding: 0, cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
             <img src="assets/logosinfondo.png" alt="DI Natale" style={{ height: 48, width: "auto", objectFit: "contain" }} />
-            <span className="dn-byline" style={{ fontSize: 10, letterSpacing: "0.2em", color: "var(--c-mute)", textTransform: "uppercase", fontFamily: "var(--ff-body)", whiteSpace: "nowrap" }}>DI NATALE · BY LETIZIA</span>
+            <span style={{ fontSize: 10, letterSpacing: "0.2em", color: "var(--c-mute)", textTransform: "uppercase", fontFamily: "var(--ff-body)", whiteSpace: "nowrap" }}>DI NATALE · BY LETIZIA</span>
           </button>
 
           <nav style={{ display: "none", alignItems: "center", gap: 4, marginLeft: "auto" }} className="dn-nav">
@@ -137,9 +137,6 @@ const Header = () => {
         @media (min-width: 980px) {
           .dn-nav { display: flex !important; }
           .dn-burger { display: none !important; }
-        }
-        @media (max-width: 480px) {
-          .dn-byline { display: none !important; }
         }
       `}</style>
     </React.Fragment>

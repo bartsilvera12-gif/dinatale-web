@@ -58,7 +58,7 @@ const HomeView = () => {
               </a>
             </div>
 
-            <div style={{ marginTop: 48, display: "grid", gap: 14, gridTemplateColumns: "repeat(3, minmax(0, 1fr))" }}>
+            <div style={{ marginTop: 48, display: "grid", gap: 14, gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))" }}>
               {[
                 { i: "sparkle", t: "Asesoría personalizada", s: "Te acompañamos a elegir." },
                 { i: "leaf", t: "Productos seleccionados", s: "Curaduría con criterio." },
