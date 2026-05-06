@@ -353,7 +353,12 @@ const ProductsSection = ({ products, setProducts, loading }) => {
                         : <div style={{ display: "flex", gap: 5, alignItems: "center" }}>
                             {isSaved && <span style={{ color: "var(--c-success)", fontSize: 12, fontWeight: 700, marginRight: 4 }}>✓</span>}
                             <button onClick={() => startEdit(p)} className="btn btn--ghost btn--sm" style={{ padding: "6px 12px", fontSize: 12 }}>Editar</button>
-                            <button onClick={() => setConfirmDelete(p)} className="btn btn--sm" style={{ padding: "6px 10px", fontSize: 12, background: "#FEE2E2", color: "#991B1B", border: "none", borderRadius: 8, cursor: "pointer" }} title="Eliminar producto">🗑</button>
+                            <button onClick={() => setConfirmDelete(p)} title="Eliminar producto"
+                              style={{ width: 32, height: 32, display: "grid", placeItems: "center", background: "#FEE2E2", color: "#991B1B", border: "none", borderRadius: 8, cursor: "pointer", flexShrink: 0 }}>
+                              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+                              </svg>
+                            </button>
                           </div>
                       }
                     </td>
