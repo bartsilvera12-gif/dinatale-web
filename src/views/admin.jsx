@@ -797,7 +797,8 @@ const ReviewsSection = ({ reviews: initialReviews }) => {
         })}
       </div>
     </div>
-);
+  );
+};
 
 /* ── Artículos ─────────────────────────────────────────────── */
 const ArticlesSection = () => (
