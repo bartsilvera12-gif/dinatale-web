@@ -72,6 +72,95 @@ const AdmSelect = ({ value, onChange, children, style }) => {
   );
 };
 
+/* ── Selector de producto con búsqueda ─────────────────────── */
+const ProductSearch = ({ value, onChange, placeholder = "Buscar producto..." }) => {
+  const [open, setOpen] = React.useState(false);
+  const [q, setQ] = React.useState("");
+  const ref = React.useRef(null);
+
+  React.useEffect(() => {
+    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const filtered = (window.PRODUCTS || []).filter((p) =>
+    !q.trim() || p.name.toLowerCase().includes(q.toLowerCase())
+  ).slice(0, 20);
+
+  const pick = (name) => { onChange(name); setQ(""); setOpen(false); };
+
+  return (
+    <div ref={ref} style={{ position: "relative" }}>
+      <button type="button" onClick={() => { setOpen((v) => !v); setQ(""); }} style={{
+        width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between",
+        padding: "10px 14px", borderRadius: 10, cursor: "pointer", fontFamily: "inherit",
+        fontSize: 14, background: "white", textAlign: "left",
+        border: open ? "1.5px solid var(--c-primary)" : "1.5px solid var(--c-border)",
+        boxShadow: open ? "0 0 0 3px rgba(232,77,163,0.10)" : "none",
+        color: value ? "var(--c-ink)" : "var(--c-mute)",
+        transition: "border-color .2s, box-shadow .2s"
+      }}>
+        <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+          {value || placeholder}
+        </span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--c-mute)" strokeWidth="2.5" strokeLinecap="round"
+          style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .2s", flexShrink: 0, marginLeft: 8 }}>
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </button>
+      {open && (
+        <div style={{
+          position: "absolute", top: "calc(100% + 6px)", left: 0, right: 0, zIndex: 999,
+          background: "white", borderRadius: 14, padding: "8px",
+          border: "1.5px solid var(--c-border)",
+          boxShadow: "0 12px 40px -8px rgba(200,38,138,0.15), 0 4px 12px rgba(0,0,0,0.08)",
+          animation: "admDropIn 0.15s ease"
+        }}>
+          <div style={{ padding: "0 4px 6px", borderBottom: "1px solid var(--c-border-soft)", marginBottom: 4 }}>
+            <input autoFocus value={q} onChange={(e) => setQ(e.target.value)}
+              placeholder="Buscar..." style={{
+                width: "100%", boxSizing: "border-box", padding: "8px 10px", border: "1.5px solid var(--c-border)",
+                borderRadius: 8, fontSize: 13, outline: "none", fontFamily: "inherit"
+              }}
+              onFocus={(e) => e.target.style.borderColor = "var(--c-primary)"}
+              onBlur={(e) => e.target.style.borderColor = "var(--c-border)"} />
+          </div>
+          <div style={{ maxHeight: 220, overflowY: "auto" }}>
+            {filtered.length === 0
+              ? <div style={{ padding: "10px 14px", fontSize: 13, color: "var(--c-mute)" }}>Sin resultados</div>
+              : filtered.map((p) => {
+                  const isSel = p.name === value;
+                  return (
+                    <div key={p.id} onClick={() => pick(p.name)} style={{
+                      padding: "9px 12px", cursor: "pointer", fontSize: 13, borderRadius: 8,
+                      display: "flex", alignItems: "center", justifyContent: "space-between",
+                      color: isSel ? "var(--c-primary-deep)" : "var(--c-ink)",
+                      fontWeight: isSel ? 600 : 400, transition: "background .12s"
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = "var(--c-rose-50)"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
+                        <img src={p.images?.[0] || window.DN_IMG_FALLBACK} onError={window.imgFallback} alt=""
+                          style={{ width: 28, height: 28, borderRadius: 6, objectFit: "cover", flexShrink: 0 }} />
+                        <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.name}</span>
+                      </div>
+                      {isSel && (
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--c-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                          <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                      )}
+                    </div>
+                  );
+                })
+            }
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 /* ── Gestor de imágenes ────────────────────────────────────── */
 const ImageManager = ({ images, onChange }) => {
   const [newUrl, setNewUrl] = React.useState("");
@@ -693,8 +782,7 @@ const ReviewsSection = ({ reviews: initialReviews }) => {
             <h3 style={{ fontFamily: "var(--ff-serif)", fontSize: 24, margin: "0 0 24px" }}>Nueva reseña</h3>
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               {[
-                { label: "Nombre *", key: "name", placeholder: "Ej: Camila R.", multi: false },
-                { label: "Producto", key: "product", placeholder: "Ej: Sérum Vitamina C", multi: false },
+                { label: "Nombre *", key: "name", placeholder: "Ej: Camila R." },
                 { label: "Texto *", key: "text", placeholder: "Comentario de la clienta...", multi: true },
               ].map(({ label, key, placeholder, multi }) => (
                 <div key={key}>
@@ -711,6 +799,10 @@ const ReviewsSection = ({ reviews: initialReviews }) => {
                   }
                 </div>
               ))}
+              <div>
+                <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "var(--c-mute)", marginBottom: 5, letterSpacing: ".06em", textTransform: "uppercase" }}>Producto</label>
+                <ProductSearch value={newData.product || ""} onChange={(v) => setNewData((d) => ({ ...d, product: v }))} />
+              </div>
               <div>
                 <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "var(--c-mute)", marginBottom: 5, letterSpacing: ".06em", textTransform: "uppercase" }}>Canal</label>
                 <AdmSelect value={newData.channel || "WhatsApp"} onChange={(e) => setNewData((d) => ({ ...d, channel: e.target.value }))}>
@@ -773,7 +865,7 @@ const ReviewsSection = ({ reviews: initialReviews }) => {
                   <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                     <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                       <input value={editData.name} onChange={(e) => setEditData((d) => ({ ...d, name: e.target.value }))} placeholder="Nombre" style={{ ...inputStyle, flex: "1 1 140px" }} />
-                      <input value={editData.product} onChange={(e) => setEditData((d) => ({ ...d, product: e.target.value }))} placeholder="Producto" style={{ ...inputStyle, flex: "1 1 140px" }} />
+                      <div style={{ flex: "1 1 140px" }}><ProductSearch value={editData.product || ""} onChange={(v) => setEditData((d) => ({ ...d, product: v }))} placeholder="Producto" /></div>
                     </div>
                     <textarea value={editData.text} onChange={(e) => setEditData((d) => ({ ...d, text: e.target.value }))} placeholder="Texto de la reseña..." rows={2}
                       style={{ ...inputStyle, resize: "vertical" }}></textarea>
