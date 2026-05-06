@@ -262,6 +262,25 @@ const loadDNFaqs = async () => {
   }
 };
 
+/* ── Crear FAQ (admin) ─────────────────────────────────────── */
+const createDNFaq = async ({ question, answer }) => {
+  const [row] = await sbPost("dn_faqs", { question, answer, sort_order: 999 });
+  return row;
+};
+
+/* ── Actualizar FAQ (admin) ────────────────────────────────── */
+const updateDNFaq = async (id, { question, answer }) => {
+  return sbPatch("dn_faqs", `id=eq.${id}`, { question, answer });
+};
+
+/* ── Eliminar FAQ (admin) ──────────────────────────────────── */
+const deleteDNFaq = async (id) => {
+  const res = await fetch(`${DN_SUPABASE_URL}/rest/v1/dn_faqs?id=eq.${id}`, {
+    method: "DELETE", headers: sbHeaders(true)
+  });
+  if (!res.ok) throw new Error(`DELETE dn_faqs: ${res.status}`);
+};
+
 /* ── Verificar credenciales de admin desde Supabase ───────── */
 const checkDNAdminCreds = async (username, password) => {
   const res = await fetch(
@@ -289,5 +308,6 @@ Object.assign(window, {
   loadDNProducts, loadDNCategories, loadDNReviews, loadDNArticles, loadDNFaqs,
   createDNProduct, updateDNProduct, deleteDNProduct, updateDNCategory, createDNCategory, deleteDNCategory,
   checkDNAdminCreds, createDNReview, updateDNReview, deleteDNReview, saveDNOrder, loadDNOrders,
+  createDNFaq, updateDNFaq, deleteDNFaq,
   mapProduct
 });
