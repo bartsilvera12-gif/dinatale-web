@@ -16,7 +16,7 @@ const AboutView = () => {
               Trabajamos sin promesas exageradas y con un tono responsable. Cada producto que sumamos a la curaduría pasa por una selección cuidada del equipo.
             </p>
             <a className="btn btn--primary" style={{ marginTop: 28 }} href={waLink("Hola, quiero solicitar asesoría personalizada.")} target="_blank" rel="noreferrer">
-              <window.Icon name="wa" size={16} color="white" /> Solicitar asesoría personalizada
+              <window.Icon name="wa" size={16} color="white" /> Solicitar consulta personalizada
             </a>
           </div>
           <div style={{ position: "relative" }}>

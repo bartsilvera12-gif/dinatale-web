@@ -27,7 +27,7 @@ const HomeView = () => {
               </button>
               <a className="btn btn--ghost btn--lg" href={waLink("Hola, quiero solicitar asesoría personalizada.")} target="_blank" rel="noreferrer">
                 <window.Icon name="sparkle" size={16} />
-                Solicitar asesoría
+                Solicitar consulta
               </a>
             </div>
 
@@ -222,7 +222,7 @@ const HomeView = () => {
             </p>
             <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
               <a className="btn btn--lg" style={{ background: "white", color: "var(--c-primary-deep)" }} href={waLink("Hola, quiero asesoría para armar mi rutina.")} target="_blank" rel="noreferrer">
-                <window.Icon name="wa" size={16} color="#25D366" /> Solicitar asesoría
+                <window.Icon name="wa" size={16} color="#25D366" /> Solicitar consulta
               </a>
               <button className="btn btn--lg" style={{ background: "transparent", color: "white", border: "1px solid rgba(255,255,255,0.5)" }} onClick={() => setRoute("products")}>
                 Ver productos

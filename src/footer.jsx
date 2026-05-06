@@ -59,7 +59,7 @@ const Footer = () => {
               <li>Domingos · cerrado</li>
             </ul>
             <a className="btn btn--outline btn--sm" href={waLink("Hola, quiero solicitar asesoría personalizada.")} target="_blank" rel="noreferrer" style={{ marginTop: 16 }}>
-              Solicitar asesoría
+              Solicitar consulta
             </a>
           </div>
         </div>
