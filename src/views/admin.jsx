@@ -171,6 +171,10 @@ const ProductsSection = ({ products, setProducts, loading }) => {
   const [saveErr, setSaveErr] = React.useState(null);
   const [confirmDelete, setConfirmDelete] = React.useState(null);
   const [deleting, setDeleting] = React.useState(false);
+  const [showNew, setShowNew] = React.useState(false);
+  const [newData, setNewData] = React.useState({});
+  const [creating, setCreating] = React.useState(false);
+  const [createErr, setCreateErr] = React.useState(null);
 
   const filtered = products.filter((p) => {
     const matchQ   = !search.trim() || p.name.toLowerCase().includes(search.toLowerCase());
@@ -180,6 +184,25 @@ const ProductsSection = ({ products, setProducts, loading }) => {
 
   const startEdit = (p) => { setEditing(p.id); setEditData({ price: p.price, stock: p.stock, tag: p.tag ?? "", oldPrice: p.oldPrice ?? "", imageUrl: p.images[0] ?? "" }); };
   const cancelEdit = () => { setEditing(null); setEditData({}); setSaveErr(null); };
+
+  const openNew = () => { setNewData({ name: "", category_id: window.CATEGORIES[0]?.id || "", price: "", oldPrice: "", stock: "", tag: "", imageUrl: "", description: "" }); setCreateErr(null); setShowNew(true); };
+
+  const createProduct = async () => {
+    if (!newData.name.trim() || !newData.price) { setCreateErr("Nombre y precio son obligatorios."); return; }
+    setCreating(true); setCreateErr(null);
+    try {
+      const row = await window.createDNProduct(newData);
+      const mapped = window.mapProduct(row);
+      const updated = [mapped, ...products];
+      setProducts(updated);
+      window.PRODUCTS = updated;
+      setShowNew(false);
+    } catch(e) {
+      setCreateErr("Error al crear el producto. Reintentá.");
+    } finally {
+      setCreating(false);
+    }
+  };
 
   const deleteProduct = async (id) => {
     setDeleting(true);
@@ -225,9 +248,15 @@ const ProductsSection = ({ products, setProducts, loading }) => {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
-      <div>
-        <h2 style={{ fontFamily: "var(--ff-serif)", fontSize: 28, margin: "0 0 4px" }}>Productos</h2>
-        <p style={{ color: "var(--c-mute)", fontSize: 14, margin: 0 }}>{products.length} productos en catálogo.</p>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
+        <div>
+          <h2 style={{ fontFamily: "var(--ff-serif)", fontSize: 28, margin: "0 0 4px" }}>Productos</h2>
+          <p style={{ color: "var(--c-mute)", fontSize: 14, margin: 0 }}>{products.length} productos en catálogo.</p>
+        </div>
+        <button onClick={openNew} className="btn btn--primary btn--sm" style={{ gap: 8 }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Nuevo producto
+        </button>
       </div>
 
       <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
@@ -244,6 +273,64 @@ const ProductsSection = ({ products, setProducts, loading }) => {
           {window.CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
         </select>
       </div>
+
+      {showNew && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 300, background: "rgba(31,23,32,0.45)", display: "grid", placeItems: "center", padding: 20 }}
+             onClick={() => !creating && setShowNew(false)}>
+          <div style={{ background: "white", borderRadius: 20, padding: "36px 32px", maxWidth: 520, width: "100%", boxShadow: "0 20px 60px rgba(0,0,0,0.2)", maxHeight: "90vh", overflowY: "auto" }}
+               onClick={(e) => e.stopPropagation()}>
+            <h3 style={{ fontFamily: "var(--ff-serif)", fontSize: 24, margin: "0 0 24px" }}>Nuevo producto</h3>
+            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+              {[
+                { label: "Nombre *", key: "name", type: "text", placeholder: "Ej: Sérum Vitamina C" },
+                { label: "Precio *", key: "price", type: "number", placeholder: "195000" },
+                { label: "Precio anterior", key: "oldPrice", type: "number", placeholder: "220000" },
+                { label: "Stock", key: "stock", type: "number", placeholder: "10" },
+                { label: "URL de imagen", key: "imageUrl", type: "url", placeholder: "https://..." },
+                { label: "Descripción", key: "description", type: "text", placeholder: "Breve descripción del producto" },
+              ].map(({ label, key, type, placeholder }) => (
+                <div key={key}>
+                  <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "var(--c-mute)", marginBottom: 5, letterSpacing: ".06em", textTransform: "uppercase" }}>{label}</label>
+                  <input type={type} value={newData[key] || ""} onChange={(e) => setNewData((d) => ({ ...d, [key]: e.target.value }))}
+                    placeholder={placeholder}
+                    style={{ width: "100%", boxSizing: "border-box", padding: "10px 14px", borderRadius: 10, border: "1.5px solid var(--c-border)", fontSize: 14, outline: "none", fontFamily: "inherit" }} />
+                </div>
+              ))}
+              <div>
+                <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "var(--c-mute)", marginBottom: 5, letterSpacing: ".06em", textTransform: "uppercase" }}>Categoría</label>
+                <select value={newData.category_id || ""} onChange={(e) => setNewData((d) => ({ ...d, category_id: e.target.value }))}
+                  style={{ width: "100%", boxSizing: "border-box", padding: "10px 14px", borderRadius: 10, border: "1.5px solid var(--c-border)", fontSize: 14, fontFamily: "inherit", outline: "none", background: "white" }}>
+                  {window.CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                </select>
+              </div>
+              <div>
+                <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "var(--c-mute)", marginBottom: 5, letterSpacing: ".06em", textTransform: "uppercase" }}>Tag</label>
+                <select value={newData.tag || ""} onChange={(e) => setNewData((d) => ({ ...d, tag: e.target.value }))}
+                  style={{ width: "100%", boxSizing: "border-box", padding: "10px 14px", borderRadius: 10, border: "1.5px solid var(--c-border)", fontSize: 14, fontFamily: "inherit", outline: "none", background: "white" }}>
+                  <option value="">Sin tag</option>
+                  <option value="new">✨ Nuevo</option>
+                  <option value="top">⭐ Top</option>
+                  <option value="sale">🏷 Oferta</option>
+                  <option value="rec">💜 Recomendado</option>
+                </select>
+              </div>
+              {newData.imageUrl && (
+                <div style={{ display: "flex", gap: 12, alignItems: "center", padding: "10px 14px", background: "var(--c-rose-50)", borderRadius: 10 }}>
+                  <img src={newData.imageUrl} onError={window.imgFallback} alt="" style={{ width: 56, height: 56, borderRadius: 8, objectFit: "cover", background: "white" }} />
+                  <span style={{ fontSize: 12, color: "var(--c-mute)" }}>Vista previa de imagen</span>
+                </div>
+              )}
+              {createErr && <p style={{ color: "var(--c-danger)", fontSize: 13, margin: 0 }}>{createErr}</p>}
+            </div>
+            <div style={{ display: "flex", gap: 10, marginTop: 24 }}>
+              <button onClick={() => setShowNew(false)} disabled={creating} className="btn btn--ghost btn--block">Cancelar</button>
+              <button onClick={createProduct} disabled={creating} className="btn btn--primary btn--block">
+                {creating ? "Creando..." : "Crear producto"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {confirmDelete && (
         <div style={{ position: "fixed", inset: 0, zIndex: 300, background: "rgba(31,23,32,0.45)", display: "grid", placeItems: "center", padding: 20 }}
