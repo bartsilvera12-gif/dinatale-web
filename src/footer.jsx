@@ -16,10 +16,11 @@ const Footer = () => {
       <div className="container" style={{ position: "relative" }}>
         <div style={{ display: "grid", gap: 48, gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
           <div>
-            <span className="dn-mark dn-mark--lg" style={{ marginBottom: 14 }}>
-              <span className="dn-mark__icon"/><span className="dn-mark__word">DI Natale</span>
-            </span>
-            <p style={{ color: "var(--c-mute)", fontSize: 14, lineHeight: 1.7, maxWidth: 320, marginTop: 16 }}>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 2, marginBottom: 14 }}>
+              <span className="dn-mark"><span className="dn-mark__icon"/><span className="dn-mark__word">DI Natale</span></span>
+              <span style={{ fontSize: 10, letterSpacing: "0.18em", color: "var(--c-mute)", textTransform: "uppercase", paddingLeft: 50 }}>by Letizia</span>
+            </div>
+            <p style={{ color: "var(--c-mute)", fontSize: 14, lineHeight: 1.7, maxWidth: 320, marginTop: 0 }}>
               Marca dedicada a estética, belleza y cuidado personal. Curaduría con criterio y asesoría cercana, profesional y delicada.
             </p>
             <div style={{ display: "flex", gap: 8, marginTop: 18 }}>
