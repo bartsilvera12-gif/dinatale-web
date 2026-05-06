@@ -121,7 +121,6 @@ const ARTICLES = [
 
 const FAQS = [
   { q: "¿Cómo realizo una compra?", a: "Puedes agregar productos al carrito y finalizar la compra desde el sitio o por WhatsApp. Te guiamos en cada paso si lo necesitas." },
-  { q: "¿Los productos tienen stock disponible?", a: "Cada producto muestra su estado actual: Disponible, Stock limitado o Sin stock. Si está sin stock, puedes consultar disponibilidad por WhatsApp." },
   { q: "¿Hacen envíos?", a: "Sí, realizamos envíos a todo el país y ofrecemos retiro en local. El costo y tiempo se confirma al finalizar la compra." },
   { q: "¿Puedo consultar antes de comprar?", a: "Por supuesto. Nuestro equipo está disponible por WhatsApp para asesorarte en la elección del producto adecuado." },
   { q: "¿Qué métodos de pago aceptan?", a: "Aceptamos transferencia bancaria, efectivo y otros medios a coordinar al momento de finalizar la compra." },

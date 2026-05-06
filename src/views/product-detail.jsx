@@ -102,7 +102,6 @@ const ProductDetailView = () => {
                 <span style={{ minWidth: 40, textAlign: "center", fontWeight: 600 }}>{qty}</span>
                 <button onClick={() => setQty((q) => Math.min(product.stock, q + 1))} style={qtyBtn} aria-label="Sumar"><window.Icon name="plus" size={14} /></button>
               </div>
-              <span style={{ fontSize: 12, color: "var(--c-mute)" }}>Máx. {product.stock}</span>
             </div>
           )}
 
@@ -112,14 +111,9 @@ const ProductDetailView = () => {
                 <window.Icon name="wa" size={16} color="white" /> Consultar disponibilidad por WhatsApp
               </a>
             ) : (
-              <React.Fragment>
-                <button className="btn btn--primary btn--lg" style={{ flex: 1 }} onClick={() => addToCart(product.id, qty)}>
-                  <window.Icon name="cart" size={16} color="white" /> Añadir al carrito
-                </button>
-                <a className="btn btn--ghost btn--lg" href={waLink(`Hola, quiero consultar por ${product.name}.`)} target="_blank" rel="noreferrer">
-                  <window.Icon name="wa" size={16} color="#25D366" />
-                </a>
-              </React.Fragment>
+              <button className="btn btn--primary btn--lg btn--block" onClick={() => addToCart(product.id, qty)}>
+                <window.Icon name="cart" size={16} color="white" /> Añadir al carrito
+              </button>
             )}
           </div>
 
