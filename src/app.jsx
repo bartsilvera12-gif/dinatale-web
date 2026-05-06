@@ -98,7 +98,7 @@ const App = () => {
 
   if (!ready) return (
     <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--c-bg)" }}>
-      <img src="assets/logo.jpeg" alt="DI Natale" style={{ height: 80, width: "auto", objectFit: "contain" }} />
+      <img src="assets/logo.jpeg" alt="DI Natale" style={{ height: 80, width: "auto", objectFit: "contain", mixBlendMode: "multiply" }} />
     </div>
   );
 

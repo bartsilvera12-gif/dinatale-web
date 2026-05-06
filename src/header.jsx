@@ -36,7 +36,7 @@ const Header = () => {
       }}>
         <div className="container" style={{ display: "flex", alignItems: "center", gap: 24, height: 76 }}>
           <button onClick={() => go("home")} aria-label="Inicio" style={{ background: "none", border: "none", padding: 0, cursor: "pointer" }}>
-            <img src="assets/logo.jpeg" alt="DI Natale" style={{ height: 52, width: "auto", objectFit: "contain" }} />
+            <img src="assets/logo.jpeg" alt="DI Natale" style={{ height: 52, width: "auto", objectFit: "contain", mixBlendMode: "multiply" }} />
           </button>
 
           <nav style={{ display: "none", alignItems: "center", gap: 4, marginLeft: "auto" }} className="dn-nav">
