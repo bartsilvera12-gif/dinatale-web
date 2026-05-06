@@ -6,10 +6,18 @@ const imgFallback = (e) => { e.target.onerror = null; e.target.src = DN_IMG_FALL
 window.DN_IMG_FALLBACK = DN_IMG_FALLBACK;
 window.imgFallback = imgFallback;
 
+/* Handler global: atrapa cualquier <img> rota en toda la app */
+document.addEventListener("error", (e) => {
+  if (e.target.tagName === "IMG" && e.target.src !== DN_IMG_FALLBACK) {
+    e.target.onerror = null;
+    e.target.src = DN_IMG_FALLBACK;
+  }
+}, true);
+
 const CATEGORIES = [
   { id: "facial", name: "Cuidado facial", desc: "Limpieza, hidratación y rituales que respetan tu piel.", img: "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=900&q=80" },
   { id: "corporal", name: "Cuidado corporal", desc: "Texturas que envuelven y nutren cada centímetro.", img: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=900&q=80" },
-  { id: "cosmetica", name: "Cosmética", desc: "Color, acabado y precisión en cada gesto.", img: "https://images.unsplash.com/photo-1631214540242-3cd8c4b0b3b8?w=900&q=80" },
+  { id: "cosmetica", name: "Cosmética", desc: "Color, acabado y precisión en cada gesto.", img: "https://images.unsplash.com/photo-1522335789-d46e6228a7b7?w=900&q=80" },
   { id: "estetica", name: "Belleza y estética", desc: "Rituales y aliados para realzar tu rutina.", img: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=900&q=80" },
   { id: "recomendados", name: "Recomendados", desc: "La selección personal del equipo DI NATALE.", img: "https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=900&q=80" },
   { id: "packs", name: "Packs especiales", desc: "Combinaciones pensadas para regalar o regalarte.", img: "https://images.unsplash.com/photo-1612817288484-6f916006741a?w=900&q=80" },
@@ -49,7 +57,7 @@ const PRODUCTS = [
     desc: "Labial de acabado satinado con un matiz mauve elegante, recomendado para quienes buscan un look sofisticado.",
     benefits: ["Acabado satinado confortable", "Larga duración media", "Aplicación precisa"],
     use: "Aplica directo desde el bullet o con pincel para mayor precisión.",
-    images: ["https://images.unsplash.com/photo-1631214500100-3b3f4a6d77e9?w=1200&q=80"]
+    images: ["https://images.unsplash.com/photo-1522335789-d46e6228a7b7?w=1200&q=80"]
   },
   { id: "p06", name: "Pack Ritual Glow", category: "packs", price: 580000, oldPrice: 720000, stock: 3, tag: "sale", rating: 5.0, reviews: 48,
     desc: "Trío curado: limpiador, sérum iluminador y crema hidratante en presentación de regalo.",
@@ -61,7 +69,7 @@ const PRODUCTS = [
     desc: "Bruma facial ligera con notas florales para un paso intermedio fresco entre la limpieza y el sérum.",
     benefits: ["Sensación fresca inmediata", "Aporte de aroma sutil", "Práctica para retoques"],
     use: "Pulveriza a 20cm del rostro con ojos cerrados.",
-    images: ["https://images.unsplash.com/photo-1620916297893-1f3acdf65bc3?w=1200&q=80"]
+    images: ["https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=1200&q=80"]
   },
   { id: "p08", name: "Exfoliante Corporal Azúcar", category: "corporal", price: 175000, oldPrice: null, stock: 9, tag: null, rating: 4.7, reviews: 82,
     desc: "Exfoliante en pasta con azúcar fina y aceite, para un ritual de cuidado corporal semanal.",
@@ -79,7 +87,7 @@ const PRODUCTS = [
     desc: "Brocha de fibras suaves en edición rosé. Aplicación uniforme para polvos y rubores.",
     benefits: ["Fibras suaves", "Mango ergonómico", "Edición rosé"],
     use: "Limpia con jabón neutro cada 7-10 usos.",
-    images: ["https://images.unsplash.com/photo-1631214524020-1ab8e0b2640f?w=1200&q=80"]
+    images: ["https://images.unsplash.com/photo-1596704017254-9b121068fb31?w=1200&q=80"]
   },
   { id: "p11", name: "Crema Manos Petite", category: "corporal", price: 75000, oldPrice: null, stock: 30, tag: null, rating: 4.9, reviews: 410,
     desc: "Crema de manos en formato petite, ideal para llevar en cartera. Absorción rápida.",
