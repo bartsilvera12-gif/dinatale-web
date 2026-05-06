@@ -35,9 +35,9 @@ const Header = () => {
         transition: "background .3s ease, border-color .3s ease"
       }}>
         <div className="container" style={{ display: "flex", alignItems: "center", gap: 24, height: 76 }}>
-          <button onClick={() => go("home")} aria-label="Inicio" style={{ background: "none", border: "none", padding: 0, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}>
-            <img src="assets/logosinfondo.png" alt="DI Natale" style={{ height: 52, width: "auto", objectFit: "contain" }} />
-            <span style={{ fontSize: 11, letterSpacing: "0.16em", color: "var(--c-mute)", textTransform: "uppercase", fontFamily: "var(--ff-body)" }}>by Letizia</span>
+          <button onClick={() => go("home")} aria-label="Inicio" style={{ background: "none", border: "none", padding: 0, cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
+            <img src="assets/logosinfondo.png" alt="DI Natale" style={{ height: 48, width: "auto", objectFit: "contain" }} />
+            <span style={{ fontSize: 10, letterSpacing: "0.2em", color: "var(--c-mute)", textTransform: "uppercase", fontFamily: "var(--ff-body)", whiteSpace: "nowrap" }}>DI NATALE · BY LETIZIA</span>
           </button>
 
           <nav style={{ display: "none", alignItems: "center", gap: 4, marginLeft: "auto" }} className="dn-nav">

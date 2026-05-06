@@ -16,9 +16,9 @@ const Footer = () => {
       <div className="container" style={{ position: "relative" }}>
         <div style={{ display: "grid", gap: 48, gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
           <div>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 4, marginBottom: 14 }}>
               <img src="assets/logosinfondo.png" alt="DI Natale" style={{ height: 64, width: "auto", objectFit: "contain" }} />
-              <span style={{ fontSize: 11, letterSpacing: "0.16em", color: "var(--c-mute)", textTransform: "uppercase", fontFamily: "var(--ff-body)" }}>by Letizia</span>
+              <span style={{ fontSize: 10, letterSpacing: "0.2em", color: "var(--c-mute)", textTransform: "uppercase", fontFamily: "var(--ff-body)" }}>DI NATALE · BY LETIZIA</span>
             </div>
             <p style={{ color: "var(--c-mute)", fontSize: 14, lineHeight: 1.7, maxWidth: 320, marginTop: 0 }}>
               Marca dedicada a estética, belleza y cuidado personal. Curaduría con criterio y asesoría cercana, profesional y delicada.
