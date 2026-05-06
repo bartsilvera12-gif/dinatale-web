@@ -35,8 +35,9 @@ const Header = () => {
         transition: "background .3s ease, border-color .3s ease"
       }}>
         <div className="container" style={{ display: "flex", alignItems: "center", gap: 24, height: 76 }}>
-          <button onClick={() => go("home")} aria-label="Inicio" style={{ background: "none", border: "none", padding: 0, cursor: "pointer" }}>
+          <button onClick={() => go("home")} aria-label="Inicio" style={{ background: "none", border: "none", padding: 0, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}>
             <img src="assets/logo.jpeg" alt="DI Natale" style={{ height: 52, width: "auto", objectFit: "contain", mixBlendMode: "multiply" }} />
+            <span style={{ fontSize: 11, letterSpacing: "0.16em", color: "var(--c-mute)", textTransform: "uppercase", fontFamily: "var(--ff-body)" }}>by Letizia</span>
           </button>
 
           <nav style={{ display: "none", alignItems: "center", gap: 4, marginLeft: "auto" }} className="dn-nav">
