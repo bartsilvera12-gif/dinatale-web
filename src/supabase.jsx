@@ -84,7 +84,7 @@ const loadDNCategories = async () => {
 };
 
 /* ── Crear producto en Supabase (admin) ────────────────────── */
-const createDNProduct = async ({ name, category_id, price, oldPrice, stock, tag, imageUrl, description }) => {
+const createDNProduct = async ({ name, category_id, price, oldPrice, stock, tag, images, description }) => {
   const [row] = await sbPost("dn_products", {
     name,
     category_id,
@@ -92,7 +92,7 @@ const createDNProduct = async ({ name, category_id, price, oldPrice, stock, tag,
     old_price:        oldPrice ? Number(oldPrice) : null,
     stock:            Number(stock) || 0,
     tag:              tag || null,
-    images:           imageUrl ? [imageUrl] : [],
+    images:           images && images.length ? images : [],
     description:      description || "",
     benefits:         [],
     use_instructions: "",

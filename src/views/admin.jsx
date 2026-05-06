@@ -3,6 +3,65 @@
 const ADMIN_USER = "admin";
 const ADMIN_PASS = "dinatale2026";
 
+/* ── Select elegante ───────────────────────────────────────── */
+const AdmSelect = ({ value, onChange, children, style }) => (
+  <div style={{ position: "relative", ...style }}>
+    <select value={value} onChange={onChange} style={{
+      width: "100%", boxSizing: "border-box", padding: "10px 36px 10px 14px",
+      borderRadius: 10, border: "1.5px solid var(--c-border)", fontSize: 14,
+      fontFamily: "inherit", outline: "none", background: "white",
+      appearance: "none", WebkitAppearance: "none", cursor: "pointer",
+      color: "var(--c-ink)", transition: "border-color .2s"
+    }}
+    onFocus={(e) => e.target.style.borderColor = "var(--c-primary)"}
+    onBlur={(e) => e.target.style.borderColor = "var(--c-border)"}
+    >{children}</select>
+    <svg style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }}
+      width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--c-mute)" strokeWidth="2.5" strokeLinecap="round">
+      <polyline points="6 9 12 15 18 9"/>
+    </svg>
+  </div>
+);
+
+/* ── Gestor de imágenes ────────────────────────────────────── */
+const ImageManager = ({ images, onChange }) => {
+  const [newUrl, setNewUrl] = React.useState("");
+  const add = () => {
+    const url = newUrl.trim();
+    if (!url) return;
+    onChange([...images, url]);
+    setNewUrl("");
+  };
+  const remove = (i) => onChange(images.filter((_, idx) => idx !== i));
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+        {images.map((src, i) => (
+          <div key={i} style={{ position: "relative", width: 64, height: 64 }}>
+            <img src={src || window.DN_IMG_FALLBACK} onError={window.imgFallback} alt=""
+              style={{ width: 64, height: 64, borderRadius: 10, objectFit: "cover", border: "1.5px solid var(--c-border)" }} />
+            <button onClick={() => remove(i)} style={{
+              position: "absolute", top: -6, right: -6, width: 20, height: 20,
+              borderRadius: "50%", background: "var(--c-danger)", color: "white",
+              border: "none", cursor: "pointer", fontSize: 11, display: "grid", placeItems: "center", lineHeight: 1
+            }}>✕</button>
+          </div>
+        ))}
+      </div>
+      <div style={{ display: "flex", gap: 8 }}>
+        <input type="url" value={newUrl} onChange={(e) => setNewUrl(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && add()}
+          placeholder="Pegar URL de imagen y presionar +"
+          style={{ flex: 1, padding: "9px 14px", borderRadius: 10, border: "1.5px solid var(--c-border)", fontSize: 13, outline: "none", fontFamily: "inherit" }} />
+        <button onClick={add} style={{
+          width: 38, height: 38, borderRadius: 10, background: "var(--grad-brand)", color: "white",
+          border: "none", cursor: "pointer", fontSize: 20, display: "grid", placeItems: "center", flexShrink: 0
+        }}>+</button>
+      </div>
+    </div>
+  );
+};
+
 /* ── Login ─────────────────────────────────────────────────── */
 const AdminLogin = ({ onAuth }) => {
   const [user, setUser] = React.useState("");
@@ -185,7 +244,7 @@ const ProductsSection = ({ products, setProducts, loading }) => {
   const startEdit = (p) => { setEditing(p.id); setEditData({ price: p.price, stock: p.stock, tag: p.tag ?? "", oldPrice: p.oldPrice ?? "", imageUrl: p.images[0] ?? "" }); };
   const cancelEdit = () => { setEditing(null); setEditData({}); setSaveErr(null); };
 
-  const openNew = () => { setNewData({ name: "", category_id: window.CATEGORIES[0]?.id || "", price: "", oldPrice: "", stock: "", tag: "", imageUrl: "", description: "" }); setCreateErr(null); setShowNew(true); };
+  const openNew = () => { setNewData({ name: "", category_id: window.CATEGORIES[0]?.id || "", price: "", oldPrice: "", stock: "", tag: "", images: [], description: "" }); setCreateErr(null); setShowNew(true); };
 
   const createProduct = async () => {
     if (!newData.name.trim() || !newData.price) { setCreateErr("Nombre y precio son obligatorios."); return; }
@@ -286,40 +345,37 @@ const ProductsSection = ({ products, setProducts, loading }) => {
                 { label: "Precio *", key: "price", type: "number", placeholder: "195000" },
                 { label: "Precio anterior", key: "oldPrice", type: "number", placeholder: "220000" },
                 { label: "Stock", key: "stock", type: "number", placeholder: "10" },
-                { label: "URL de imagen", key: "imageUrl", type: "url", placeholder: "https://..." },
                 { label: "Descripción", key: "description", type: "text", placeholder: "Breve descripción del producto" },
               ].map(({ label, key, type, placeholder }) => (
                 <div key={key}>
                   <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "var(--c-mute)", marginBottom: 5, letterSpacing: ".06em", textTransform: "uppercase" }}>{label}</label>
                   <input type={type} value={newData[key] || ""} onChange={(e) => setNewData((d) => ({ ...d, [key]: e.target.value }))}
                     placeholder={placeholder}
-                    style={{ width: "100%", boxSizing: "border-box", padding: "10px 14px", borderRadius: 10, border: "1.5px solid var(--c-border)", fontSize: 14, outline: "none", fontFamily: "inherit" }} />
+                    style={{ width: "100%", boxSizing: "border-box", padding: "10px 14px", borderRadius: 10, border: "1.5px solid var(--c-border)", fontSize: 14, outline: "none", fontFamily: "inherit", transition: "border-color .2s" }}
+                    onFocus={(e) => e.target.style.borderColor = "var(--c-primary)"}
+                    onBlur={(e) => e.target.style.borderColor = "var(--c-border)"} />
                 </div>
               ))}
               <div>
                 <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "var(--c-mute)", marginBottom: 5, letterSpacing: ".06em", textTransform: "uppercase" }}>Categoría</label>
-                <select value={newData.category_id || ""} onChange={(e) => setNewData((d) => ({ ...d, category_id: e.target.value }))}
-                  style={{ width: "100%", boxSizing: "border-box", padding: "10px 14px", borderRadius: 10, border: "1.5px solid var(--c-border)", fontSize: 14, fontFamily: "inherit", outline: "none", background: "white" }}>
+                <AdmSelect value={newData.category_id || ""} onChange={(e) => setNewData((d) => ({ ...d, category_id: e.target.value }))}>
                   {window.CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-                </select>
+                </AdmSelect>
               </div>
               <div>
                 <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "var(--c-mute)", marginBottom: 5, letterSpacing: ".06em", textTransform: "uppercase" }}>Tag</label>
-                <select value={newData.tag || ""} onChange={(e) => setNewData((d) => ({ ...d, tag: e.target.value }))}
-                  style={{ width: "100%", boxSizing: "border-box", padding: "10px 14px", borderRadius: 10, border: "1.5px solid var(--c-border)", fontSize: 14, fontFamily: "inherit", outline: "none", background: "white" }}>
+                <AdmSelect value={newData.tag || ""} onChange={(e) => setNewData((d) => ({ ...d, tag: e.target.value }))}>
                   <option value="">Sin tag</option>
                   <option value="new">✨ Nuevo</option>
                   <option value="top">⭐ Top</option>
                   <option value="sale">🏷 Oferta</option>
                   <option value="rec">💜 Recomendado</option>
-                </select>
+                </AdmSelect>
               </div>
-              {newData.imageUrl && (
-                <div style={{ display: "flex", gap: 12, alignItems: "center", padding: "10px 14px", background: "var(--c-rose-50)", borderRadius: 10 }}>
-                  <img src={newData.imageUrl} onError={window.imgFallback} alt="" style={{ width: 56, height: 56, borderRadius: 8, objectFit: "cover", background: "white" }} />
-                  <span style={{ fontSize: 12, color: "var(--c-mute)" }}>Vista previa de imagen</span>
-                </div>
-              )}
+              <div>
+                <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "var(--c-mute)", marginBottom: 5, letterSpacing: ".06em", textTransform: "uppercase" }}>Imágenes</label>
+                <ImageManager images={newData.images || []} onChange={(imgs) => setNewData((d) => ({ ...d, images: imgs }))} />
+              </div>
               {createErr && <p style={{ color: "var(--c-danger)", fontSize: 13, margin: 0 }}>{createErr}</p>}
             </div>
             <div style={{ display: "flex", gap: 10, marginTop: 24 }}>
@@ -416,14 +472,13 @@ const ProductsSection = ({ products, setProducts, loading }) => {
                     </td>
                     <td style={{ padding: "10px 12px" }}>
                       {isEdit
-                        ? <select value={editData.tag} onChange={(e) => setEditData((d) => ({ ...d, tag: e.target.value }))}
-                            style={{ padding: "5px 8px", border: "1.5px solid var(--c-primary)", borderRadius: 7, fontSize: 12, fontFamily: "inherit", outline: "none", maxWidth: 100 }}>
+                        ? <AdmSelect value={editData.tag} onChange={(e) => setEditData((d) => ({ ...d, tag: e.target.value }))} style={{ maxWidth: 110 }}>
                             <option value="">Sin tag</option>
                             <option value="top">⭐ Top</option>
                             <option value="new">✨ Nuevo</option>
                             <option value="sale">🏷 Oferta</option>
                             <option value="rec">💜 Rec.</option>
-                          </select>
+                          </AdmSelect>
                         : <TagPill tag={p.tag} />
                       }
                     </td>
