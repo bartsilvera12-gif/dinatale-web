@@ -16,7 +16,6 @@ const Header = () => {
     { id: "products", label: "Productos" },
     { id: "categories", label: "Categorías" },
     { id: "reviews", label: "Reseñas" },
-    { id: "faq", label: "FAQ" },
     { id: "about", label: "Quiénes somos" }
   ];
 
@@ -37,10 +36,7 @@ const Header = () => {
       }}>
         <div className="container" style={{ display: "flex", alignItems: "center", gap: 24, height: 76 }}>
           <button onClick={() => go("home")} aria-label="Inicio" style={{ background: "none", border: "none", padding: 0, cursor: "pointer" }}>
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 1 }}>
-              <span className="dn-mark"><span className="dn-mark__icon"/><span className="dn-mark__word">DI Natale</span></span>
-              <span style={{ fontSize: 10, letterSpacing: "0.18em", color: "var(--c-mute)", textTransform: "uppercase", paddingLeft: 50 }}>by Letizia</span>
-            </div>
+            <img src="assets/logo.jpeg" alt="DI Natale" style={{ height: 52, width: "auto", objectFit: "contain" }} />
           </button>
 
           <nav style={{ display: "none", alignItems: "center", gap: 4, marginLeft: "auto" }} className="dn-nav">
@@ -116,7 +112,7 @@ const Header = () => {
           <div style={{ position: "absolute", inset: 0, background: "rgba(31,23,32,0.4)" }} />
           <aside style={{ position: "absolute", top: 0, right: 0, bottom: 0, width: "min(360px, 88vw)", background: "white", padding: "24px 24px 32px", display: "flex", flexDirection: "column", animation: "viewFade 240ms ease both" }} onClick={(e) => e.stopPropagation()}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 28 }}>
-              <span className="dn-mark"><span className="dn-mark__icon"/><span className="dn-mark__word">DI Natale</span></span>
+              <img src="assets/logo.jpeg" alt="DI Natale" style={{ height: 48, width: "auto", objectFit: "contain" }} />
               <button onClick={() => setMenuOpen(false)} style={iconBtn} aria-label="Cerrar"><window.Icon name="close" size={18} /></button>
             </div>
             <nav style={{ display: "flex", flexDirection: "column", gap: 4 }}>

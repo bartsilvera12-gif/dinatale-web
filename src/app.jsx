@@ -98,10 +98,7 @@ const App = () => {
 
   if (!ready) return (
     <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--c-bg)" }}>
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 2 }}>
-        <span className="dn-mark"><span className="dn-mark__icon"/><span className="dn-mark__word">DI Natale</span></span>
-        <span style={{ fontSize: 10, letterSpacing: "0.18em", color: "var(--c-mute)", textTransform: "uppercase", paddingLeft: 50 }}>by Letizia</span>
-      </div>
+      <img src="assets/logo.jpeg" alt="DI Natale" style={{ height: 80, width: "auto", objectFit: "contain" }} />
     </div>
   );
 

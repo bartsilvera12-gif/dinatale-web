@@ -241,10 +241,7 @@ const AdminLogin = ({ onAuth }) => {
         animation: shake ? "adm-shake 0.4s ease" : "none"
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 36 }}>
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 1 }}>
-            <span className="dn-mark"><span className="dn-mark__icon"/><span className="dn-mark__word">DI Natale</span></span>
-            <span style={{ fontSize: 10, letterSpacing: "0.18em", color: "var(--c-mute)", textTransform: "uppercase", paddingLeft: 50 }}>by Letizia</span>
-          </div>
+          <img src="assets/logo.jpeg" alt="DI Natale" style={{ height: 52, width: "auto", objectFit: "contain" }} />
           <span style={{ background: "var(--c-rose-100)", color: "var(--c-primary-deep)", fontSize: 11, fontWeight: 700, padding: "3px 9px", borderRadius: 99, letterSpacing: ".05em" }}>ADMIN</span>
         </div>
         <h2 style={{ fontFamily: "var(--ff-serif)", fontSize: 26, margin: "0 0 8px" }}>Panel de administración</h2>
@@ -1384,10 +1381,7 @@ const AdminPanel = ({ onLogout }) => {
   const SidebarContent = () => (
     <div style={{ display: "flex", flexDirection: "column", height: "100%", padding: "28px 16px" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 32, paddingLeft: 8 }}>
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 1 }}>
-          <span className="dn-mark"><span className="dn-mark__icon"/><span className="dn-mark__word">DI Natale</span></span>
-          <span style={{ fontSize: 10, letterSpacing: "0.18em", color: "var(--c-mute)", textTransform: "uppercase", paddingLeft: 50 }}>by Letizia</span>
-        </div>
+        <img src="assets/logo.jpeg" alt="DI Natale" style={{ height: 48, width: "auto", objectFit: "contain" }} />
         <span style={{ background: "var(--c-rose-100)", color: "var(--c-primary-deep)", fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 99, letterSpacing: ".05em" }}>ADMIN</span>
       </div>
 
@@ -1452,7 +1446,7 @@ const AdminPanel = ({ onLogout }) => {
             <window.Icon name="menu" size={18} />
           </button>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <span className="dn-mark"><span className="dn-mark__icon"/></span>
+            <img src="assets/logo.jpeg" alt="DI Natale" style={{ height: 36, width: "auto", objectFit: "contain" }} />
             <span style={{ fontFamily: "var(--ff-serif)", fontWeight: 600, fontSize: 18 }}>
               {SECTIONS.find((s) => s.id === section)?.label}
             </span>

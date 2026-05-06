@@ -80,7 +80,7 @@ const HomeView = () => {
 
             {/* Center icon, large */}
             <div style={{ position: "absolute", left: "50%", top: "48%", transform: "translate(-50%, -50%)", width: "70%", aspectRatio: "1 / 1" }}>
-              <img src="assets/dinatale-icon.png" alt="DI Natale" style={{ width: "100%", height: "100%", objectFit: "contain", filter: "drop-shadow(0 30px 60px rgba(232, 77, 163, 0.35))" }} />
+              <img src="assets/logo.jpeg" alt="DI Natale" style={{ width: "100%", height: "100%", objectFit: "contain", filter: "drop-shadow(0 30px 60px rgba(232, 77, 163, 0.35))" }} />
             </div>
 
             {/* Floating cards */}
