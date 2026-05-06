@@ -729,6 +729,12 @@ const CategoriesSection = () => {
   const [saving, setSaving] = React.useState(false);
   const [saved, setSaved] = React.useState(null);
   const [saveErr, setSaveErr] = React.useState(null);
+  const [confirmDelete, setConfirmDelete] = React.useState(null);
+  const [deleting, setDeleting] = React.useState(false);
+  const [showNew, setShowNew] = React.useState(false);
+  const [newData, setNewData] = React.useState({});
+  const [creating, setCreating] = React.useState(false);
+  const [createErr, setCreateErr] = React.useState(null);
 
   const startEdit = (c) => { setEditing(c.id); setEditData({ name: c.name, desc: c.desc, img: c.img }); setSaveErr(null); };
   const cancelEdit = () => { setEditing(null); setEditData({}); setSaveErr(null); };
@@ -750,14 +756,114 @@ const CategoriesSection = () => {
     }
   };
 
+  const deleteCategory = async (id) => {
+    setDeleting(true);
+    try {
+      await window.deleteDNCategory(id);
+      const updated = cats.filter((c) => c.id !== id);
+      setCats(updated);
+      window.CATEGORIES = updated;
+      setConfirmDelete(null);
+    } catch(e) {
+      alert("Error al eliminar la categoría. Reintentá.");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const openNew = () => { setNewData({ name: "", desc: "", img: "" }); setCreateErr(null); setShowNew(true); };
+
+  const createCategory = async () => {
+    if (!newData.name.trim()) { setCreateErr("El nombre es obligatorio."); return; }
+    setCreating(true); setCreateErr(null);
+    try {
+      const row = await window.createDNCategory({ name: newData.name, description: newData.desc, img: newData.img });
+      const mapped = { id: row.id, name: row.name, desc: row.description || "", img: row.img || "" };
+      const updated = [...cats, mapped];
+      setCats(updated);
+      window.CATEGORIES = updated;
+      setShowNew(false);
+    } catch(e) {
+      setCreateErr("Error al crear la categoría. Reintentá.");
+    } finally {
+      setCreating(false);
+    }
+  };
+
   const fieldStyle = { width: "100%", boxSizing: "border-box", padding: "8px 12px", borderRadius: 8, border: "1.5px solid var(--c-primary)", fontSize: 13, outline: "none", fontFamily: "inherit" };
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
-      <div>
-        <h2 style={{ fontFamily: "var(--ff-serif)", fontSize: 28, margin: "0 0 4px" }}>Categorías</h2>
-        <p style={{ color: "var(--c-mute)", fontSize: 14, margin: 0 }}>{cats.length} categorías en el catálogo.</p>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
+        <div>
+          <h2 style={{ fontFamily: "var(--ff-serif)", fontSize: 28, margin: "0 0 4px" }}>Categorías</h2>
+          <p style={{ color: "var(--c-mute)", fontSize: 14, margin: 0 }}>{cats.length} categorías en el catálogo.</p>
+        </div>
+        <button onClick={openNew} className="btn btn--primary btn--sm" style={{ gap: 8 }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Nueva categoría
+        </button>
       </div>
+
+      {showNew && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 300, background: "rgba(31,23,32,0.45)", display: "grid", placeItems: "center", padding: 20 }}
+             onClick={() => !creating && setShowNew(false)}>
+          <div style={{ background: "white", borderRadius: 20, padding: "36px 32px", maxWidth: 480, width: "100%", boxShadow: "0 20px 60px rgba(0,0,0,0.2)" }}
+               onClick={(e) => e.stopPropagation()}>
+            <h3 style={{ fontFamily: "var(--ff-serif)", fontSize: 24, margin: "0 0 24px" }}>Nueva categoría</h3>
+            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+              {[
+                { label: "Nombre *", key: "name", placeholder: "Ej: Hidratantes" },
+                { label: "Descripción", key: "desc", placeholder: "Breve descripción" },
+                { label: "URL de imagen", key: "img", placeholder: "https://..." },
+              ].map(({ label, key, placeholder }) => (
+                <div key={key}>
+                  <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "var(--c-mute)", marginBottom: 5, letterSpacing: ".06em", textTransform: "uppercase" }}>{label}</label>
+                  <input value={newData[key] || ""} onChange={(e) => setNewData((d) => ({ ...d, [key]: e.target.value }))}
+                    placeholder={placeholder}
+                    style={{ width: "100%", boxSizing: "border-box", padding: "10px 14px", borderRadius: 10, border: "1.5px solid var(--c-border)", fontSize: 14, outline: "none", fontFamily: "inherit" }}
+                    onFocus={(e) => e.target.style.borderColor = "var(--c-primary)"}
+                    onBlur={(e) => e.target.style.borderColor = "var(--c-border)"} />
+                </div>
+              ))}
+              {newData.img && (
+                <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                  <img src={newData.img} onError={window.imgFallback} alt="" style={{ width: 64, height: 64, borderRadius: 10, objectFit: "cover", border: "1.5px solid var(--c-border)" }} />
+                  <span style={{ fontSize: 12, color: "var(--c-mute)" }}>Vista previa</span>
+                </div>
+              )}
+              {createErr && <p style={{ color: "var(--c-danger)", fontSize: 13, margin: 0 }}>{createErr}</p>}
+            </div>
+            <div style={{ display: "flex", gap: 10, marginTop: 24 }}>
+              <button onClick={() => setShowNew(false)} disabled={creating} className="btn btn--ghost btn--block">Cancelar</button>
+              <button onClick={createCategory} disabled={creating} className="btn btn--primary btn--block">
+                {creating ? "Creando..." : "Crear categoría"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {confirmDelete && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 300, background: "rgba(31,23,32,0.45)", display: "grid", placeItems: "center", padding: 20 }}
+             onClick={() => !deleting && setConfirmDelete(null)}>
+          <div style={{ background: "white", borderRadius: 20, padding: "36px 32px", maxWidth: 400, width: "100%", boxShadow: "0 20px 60px rgba(0,0,0,0.2)" }}
+               onClick={(e) => e.stopPropagation()}>
+            <div style={{ fontSize: 36, marginBottom: 12, textAlign: "center" }}>🗑️</div>
+            <h3 style={{ fontFamily: "var(--ff-serif)", fontSize: 22, margin: "0 0 10px", textAlign: "center" }}>¿Eliminar categoría?</h3>
+            <p style={{ color: "var(--c-mute)", fontSize: 14, textAlign: "center", margin: "0 0 24px", lineHeight: 1.5 }}>
+              <strong>{confirmDelete.name}</strong> será eliminada permanentemente. Los productos de esta categoría quedarán sin categoría.
+            </p>
+            <div style={{ display: "flex", gap: 10 }}>
+              <button onClick={() => setConfirmDelete(null)} disabled={deleting} className="btn btn--ghost btn--block">Cancelar</button>
+              <button onClick={() => deleteCategory(confirmDelete.id)} disabled={deleting}
+                style={{ flex: 1, padding: "12px 0", borderRadius: 999, background: "var(--c-danger)", color: "white", border: "none", fontWeight: 600, fontSize: 14, cursor: "pointer", fontFamily: "inherit" }}>
+                {deleting ? "Eliminando..." : "Sí, eliminar"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div style={{ display: "grid", gap: 14 }}>
         {cats.map((c) => {
@@ -793,7 +899,15 @@ const CategoriesSection = () => {
                     <button onClick={cancelEdit} className="btn btn--ghost btn--sm" style={{ padding: "7px 14px", fontSize: 13 }}>Cancelar</button>
                   </React.Fragment>
                 ) : (
-                  <button onClick={() => startEdit(c)} className="btn btn--ghost btn--sm" style={{ padding: "7px 14px", fontSize: 13 }}>Editar</button>
+                  <div style={{ display: "flex", gap: 6 }}>
+                    <button onClick={() => startEdit(c)} className="btn btn--ghost btn--sm" style={{ padding: "7px 14px", fontSize: 13 }}>Editar</button>
+                    <button onClick={() => setConfirmDelete(c)} title="Eliminar categoría"
+                      style={{ width: 32, height: 32, display: "grid", placeItems: "center", background: "#FEE2E2", color: "#991B1B", border: "none", borderRadius: 8, cursor: "pointer", flexShrink: 0 }}>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+                      </svg>
+                    </button>
+                  </div>
                 )}
               </div>
             </div>

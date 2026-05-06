@@ -88,6 +88,25 @@ const updateDNCategory = async (id, { name, description, img }) => {
   return sbPatch("dn_categories", `id=eq.${id}`, { name, description, img: img || null });
 };
 
+/* ── Crear categoría en Supabase (admin) ───────────────────── */
+const createDNCategory = async ({ name, description, img }) => {
+  const [row] = await sbPost("dn_categories", {
+    name,
+    description: description || "",
+    img:         img || null,
+    sort_order:  999
+  });
+  return row;
+};
+
+/* ── Eliminar categoría en Supabase (admin) ────────────────── */
+const deleteDNCategory = async (id) => {
+  const res = await fetch(`${DN_SUPABASE_URL}/rest/v1/dn_categories?id=eq.${id}`, {
+    method: "DELETE", headers: sbHeaders(true)
+  });
+  if (!res.ok) throw new Error(`DELETE dn_categories: ${res.status}`);
+};
+
 /* ── Crear producto en Supabase (admin) ────────────────────── */
 const createDNProduct = async ({ name, category_id, price, oldPrice, stock, tag, images, description }) => {
   const [row] = await sbPost("dn_products", {
@@ -238,6 +257,6 @@ window.__sbLoadDNData = async () => {
 Object.assign(window, {
   sbGet, sbPatch, sbPost,
   loadDNProducts, loadDNCategories, loadDNReviews, loadDNArticles, loadDNFaqs,
-  createDNProduct, updateDNProduct, deleteDNProduct, updateDNCategory, saveDNOrder, loadDNOrders,
+  createDNProduct, updateDNProduct, deleteDNProduct, updateDNCategory, createDNCategory, deleteDNCategory, saveDNOrder, loadDNOrders,
   mapProduct
 });
