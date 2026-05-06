@@ -72,9 +72,6 @@ const CartView = () => {
               Finalizar compra
               <window.Icon name="chevron-right" size={16} color="white" />
             </button>
-            <a className="btn btn--wa btn--block" href={wa} target="_blank" rel="noreferrer" style={{ marginTop: 10 }}>
-              <window.Icon name="wa" size={16} color="white" /> Finalizar por WhatsApp
-            </a>
             <p style={{ fontSize: 12, color: "var(--c-mute)", marginTop: 16, textAlign: "center" }}>
               Pagos por transferencia, efectivo u otros medios a coordinar.
             </p>

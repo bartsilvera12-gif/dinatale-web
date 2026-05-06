@@ -15,7 +15,6 @@ const Header = () => {
     { id: "home", label: "Inicio" },
     { id: "products", label: "Productos" },
     { id: "categories", label: "Categorías" },
-    { id: "blog", label: "Consultoría" },
     { id: "reviews", label: "Reseñas" },
     { id: "faq", label: "FAQ" },
     { id: "about", label: "Quiénes somos" }

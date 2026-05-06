@@ -29,12 +29,16 @@ const CheckoutView = () => {
   };
 
   const buildWA = () => {
-    return `Hola DI NATALE, quiero confirmar mi pedido:\n\n*Cliente:* ${form.name}\n*Teléfono:* ${form.phone}\n*Email:* ${form.email}\n*Entrega:* ${form.delivery === "envio" ? "Envío a " + form.address : "Retiro en local"}\n*Pago:* ${form.payment}\n\n*Productos:*\n${cartItems.map((p) => `• ${p.qty}x ${p.name} — ${fmtGs(p.lineTotal)}`).join("\n")}\n\n*Total:* ${fmtGs(cartTotal)}${form.note ? "\n\n*Nota:* " + form.note : ""}`;
+    const items = cartItems.map((p) => `• ${p.qty}x ${p.name} — ${fmtGs(p.lineTotal)}`).join("\n");
+    const entrega = form.delivery === "envio" ? `Envío a domicilio\nDirección: ${form.address}` : "Retiro en local (Asunción)";
+    const pago = { transferencia: "Transferencia bancaria", efectivo: "Efectivo", otro: "A coordinar" }[form.payment] || form.payment;
+    return `🌸 *Pedido DI NATALE*\n\n*Datos del cliente*\nNombre: ${form.name}\nTeléfono: ${form.phone}\nEmail: ${form.email}\n\n*Entrega*\n${entrega}\n\n*Forma de pago*\n${pago}\n\n*Productos*\n${items}\n\n*Total: ${fmtGs(cartTotal)}*${form.note ? `\n\n*Nota:* ${form.note}` : ""}\n\n_Por favor confirmame disponibilidad y datos de pago. ¡Gracias!_`;
   };
 
   const onSubmit = (e) => {
     e.preventDefault();
     if (!validate()) return;
+    window.open(waLink(buildWA()), "_blank");
     setStep("done");
   };
 
@@ -60,10 +64,7 @@ const CheckoutView = () => {
           </div>
         </div>
         <div style={{ display: "flex", gap: 10, justifyContent: "center", marginTop: 28, flexWrap: "wrap" }}>
-          <a className="btn btn--wa btn--lg" href={waLink(buildWA())} target="_blank" rel="noreferrer">
-            <window.Icon name="wa" size={16} color="white" /> Confirmar por WhatsApp
-          </a>
-          <button className="btn btn--ghost btn--lg" onClick={() => { clearCart(); setRoute("home"); }}>Volver al inicio</button>
+          <button className="btn btn--primary btn--lg" onClick={() => { clearCart(); setRoute("home"); }}>Volver al inicio</button>
         </div>
       </div>
     );
