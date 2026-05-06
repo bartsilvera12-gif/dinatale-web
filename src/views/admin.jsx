@@ -1,22 +1,30 @@
 /* ─── Panel de Administración DI NATALE ─── */
 
+const ADMIN_USER = "admin";
 const ADMIN_PASS = "dinatale2026";
 
 /* ── Login ─────────────────────────────────────────────────── */
 const AdminLogin = ({ onAuth }) => {
+  const [user, setUser] = React.useState("");
   const [pass, setPass] = React.useState("");
   const [err, setErr] = React.useState(false);
   const [shake, setShake] = React.useState(false);
 
   const submit = (e) => {
     e.preventDefault();
-    if (pass === ADMIN_PASS) {
+    if (user === ADMIN_USER && pass === ADMIN_PASS) {
       onAuth();
     } else {
       setErr(true); setShake(true);
       setTimeout(() => { setErr(false); setShake(false); }, 1800);
     }
   };
+
+  const inputStyle = (hasErr) => ({
+    width: "100%", boxSizing: "border-box", padding: "14px 18px", borderRadius: 12,
+    border: `1.5px solid ${hasErr ? "var(--c-danger)" : "var(--c-border)"}`,
+    fontSize: 15, outline: "none", fontFamily: "inherit", transition: "border-color .2s"
+  });
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--grad-soft)" }}>
@@ -30,20 +38,26 @@ const AdminLogin = ({ onAuth }) => {
           <span style={{ background: "var(--c-rose-100)", color: "var(--c-primary-deep)", fontSize: 11, fontWeight: 700, padding: "3px 9px", borderRadius: 99, letterSpacing: ".05em" }}>ADMIN</span>
         </div>
         <h2 style={{ fontFamily: "var(--ff-serif)", fontSize: 26, margin: "0 0 8px" }}>Panel de administración</h2>
-        <p style={{ color: "var(--c-mute)", fontSize: 14, marginBottom: 30, lineHeight: 1.5 }}>Ingresá la contraseña para acceder.</p>
-        <form onSubmit={submit}>
-          <input
-            type="password" value={pass} onChange={(e) => setPass(e.target.value)}
-            placeholder="Contraseña" autoFocus
-            style={{
-              width: "100%", boxSizing: "border-box", padding: "14px 18px", borderRadius: 12,
-              border: `1.5px solid ${err ? "var(--c-danger)" : "var(--c-border)"}`,
-              fontSize: 15, outline: "none", marginBottom: err ? 10 : 18,
-              fontFamily: "inherit", transition: "border-color .2s"
-            }}
-          />
-          {err && <p style={{ color: "var(--c-danger)", fontSize: 13, marginBottom: 16 }}>Contraseña incorrecta. Intentá de nuevo.</p>}
-          <button type="submit" className="btn btn--primary btn--block btn--lg">Ingresar</button>
+        <p style={{ color: "var(--c-mute)", fontSize: 14, marginBottom: 30, lineHeight: 1.5 }}>Ingresá tus credenciales para acceder.</p>
+        <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          <div>
+            <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--c-mute)", marginBottom: 6, letterSpacing: ".05em" }}>USUARIO</label>
+            <input
+              type="text" value={user} onChange={(e) => setUser(e.target.value)}
+              placeholder="admin" autoFocus autoComplete="username"
+              style={inputStyle(err)}
+            />
+          </div>
+          <div>
+            <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--c-mute)", marginBottom: 6, letterSpacing: ".05em" }}>CONTRASEÑA</label>
+            <input
+              type="password" value={pass} onChange={(e) => setPass(e.target.value)}
+              placeholder="••••••••••" autoComplete="current-password"
+              style={inputStyle(err)}
+            />
+          </div>
+          {err && <p style={{ color: "var(--c-danger)", fontSize: 13, margin: 0 }}>Usuario o contraseña incorrectos.</p>}
+          <button type="submit" className="btn btn--primary btn--block btn--lg" style={{ marginTop: 4 }}>Ingresar</button>
         </form>
       </div>
       <style>{`@keyframes adm-shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-9px)} 60%{transform:translateX(9px)} 80%{transform:translateX(-4px)} }`}</style>

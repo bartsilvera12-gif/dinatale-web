@@ -136,14 +136,75 @@ const loadDNOrders = async () => {
   }
 };
 
-/* ── Init: carga productos y categorías al arrancar ─────────── */
+/* ── Cargar reseñas desde dinatale.reviews ─────────────────── */
+const loadDNReviews = async () => {
+  try {
+    const rows = await sbGet("dn_reviews", "order=created_at.asc");
+    window.REVIEWS = rows.map((r) => ({
+      id:      r.id,
+      name:    r.name,
+      text:    r.text,
+      rating:  r.rating,
+      product: r.product,
+      channel: r.channel
+    }));
+    return window.REVIEWS;
+  } catch(e) {
+    console.warn("Supabase: usando reseñas locales.", e);
+    return window.REVIEWS;
+  }
+};
+
+/* ── Cargar artículos desde dinatale.articles ──────────────── */
+const loadDNArticles = async () => {
+  try {
+    const rows = await sbGet("dn_articles", "order=created_at.desc");
+    window.ARTICLES = rows.map((a) => ({
+      id:      a.id,
+      title:   a.title,
+      excerpt: a.excerpt,
+      date:    a.date,
+      read:    a.read_time,
+      cat:     a.category,
+      img:     a.img
+    }));
+    return window.ARTICLES;
+  } catch(e) {
+    console.warn("Supabase: usando artículos locales.", e);
+    return window.ARTICLES;
+  }
+};
+
+/* ── Cargar FAQs desde dinatale.faqs ──────────────────────── */
+const loadDNFaqs = async () => {
+  try {
+    const rows = await sbGet("dn_faqs", "order=sort_order.asc");
+    window.FAQS = rows.map((f) => ({
+      id: f.id,
+      q:  f.question,
+      a:  f.answer
+    }));
+    return window.FAQS;
+  } catch(e) {
+    console.warn("Supabase: usando FAQs locales.", e);
+    return window.FAQS;
+  }
+};
+
+/* ── Init: carga todos los datos al arrancar ───────────────── */
 window.__sbLoadDNData = async () => {
-  await Promise.all([loadDNProducts(), loadDNCategories()]);
+  await Promise.all([
+    loadDNProducts(),
+    loadDNCategories(),
+    loadDNReviews(),
+    loadDNArticles(),
+    loadDNFaqs()
+  ]);
 };
 
 Object.assign(window, {
   sbGet, sbPatch, sbPost,
-  loadDNProducts, loadDNCategories,
+  loadDNProducts, loadDNCategories, loadDNReviews, loadDNArticles, loadDNFaqs,
   updateDNProduct, saveDNOrder, loadDNOrders,
   mapProduct
 });
