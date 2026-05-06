@@ -199,10 +199,10 @@ const StatCard = ({ label, value, sub, color, icon }) => {
 /* ── Tag Pill ──────────────────────────────────────────────── */
 const TagPill = ({ tag }) => {
   const map = {
-    top:  { label: "⭐ Top",    bg: "#FEF3C7", color: "#92400E" },
-    new:  { label: "✨ Nuevo",  bg: "#DCFCE7", color: "#166534" },
-    sale: { label: "🏷 Oferta", bg: "#FEE2E2", color: "#991B1B" },
-    rec:  { label: "💜 Rec.",   bg: "#EDE9FE", color: "#5B21B6" },
+    top:  { label: "Top",    bg: "#FEF3C7", color: "#92400E" },
+    new:  { label: "Nuevo",  bg: "#DCFCE7", color: "#166534" },
+    sale: { label: "Oferta", bg: "#FEE2E2", color: "#991B1B" },
+    rec:  { label: "Rec.",   bg: "#EDE9FE", color: "#5B21B6" },
   };
   if (!tag) return <span style={{ color: "var(--c-mute)", fontSize: 12 }}>—</span>;
   const t = map[tag] || { label: tag, bg: "#F3F4F6", color: "#374151" };
@@ -421,10 +421,10 @@ const ProductsSection = ({ products, setProducts, loading }) => {
                 <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "var(--c-mute)", marginBottom: 5, letterSpacing: ".06em", textTransform: "uppercase" }}>Tag</label>
                 <AdmSelect value={newData.tag || ""} onChange={(e) => setNewData((d) => ({ ...d, tag: e.target.value }))}>
                   <option value="">Sin tag</option>
-                  <option value="new">✨ Nuevo</option>
-                  <option value="top">⭐ Top</option>
-                  <option value="sale">🏷 Oferta</option>
-                  <option value="rec">💜 Recomendado</option>
+                  <option value="new">Nuevo</option>
+                  <option value="top">Top</option>
+                  <option value="sale">Oferta</option>
+                  <option value="rec">Recomendado</option>
                 </AdmSelect>
               </div>
               <div>
@@ -529,10 +529,10 @@ const ProductsSection = ({ products, setProducts, loading }) => {
                       {isEdit
                         ? <AdmSelect value={editData.tag} onChange={(e) => setEditData((d) => ({ ...d, tag: e.target.value }))} style={{ maxWidth: 110 }}>
                             <option value="">Sin tag</option>
-                            <option value="top">⭐ Top</option>
-                            <option value="new">✨ Nuevo</option>
-                            <option value="sale">🏷 Oferta</option>
-                            <option value="rec">💜 Rec.</option>
+                            <option value="top">Top</option>
+                            <option value="new">Nuevo</option>
+                            <option value="sale">Oferta</option>
+                            <option value="rec">Rec.</option>
                           </AdmSelect>
                         : <TagPill tag={p.tag} />
                       }
