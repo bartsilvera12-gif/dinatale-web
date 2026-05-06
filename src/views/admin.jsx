@@ -917,30 +917,6 @@ const ReviewsSection = ({ reviews: initialReviews }) => {
   );
 };
 
-/* ── Artículos ─────────────────────────────────────────────── */
-const ArticlesSection = () => (
-  <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
-    <div>
-      <h2 style={{ fontFamily: "var(--ff-serif)", fontSize: 28, margin: "0 0 4px" }}>Artículos</h2>
-      <p style={{ color: "var(--c-mute)", fontSize: 14, margin: 0 }}>{window.ARTICLES.length} artículos publicados.</p>
-    </div>
-    <div style={{ display: "grid", gap: 14 }}>
-      {window.ARTICLES.map((a) => (
-        <div key={a.id} className="card" style={{ padding: "18px 22px", display: "flex", gap: 16, alignItems: "center" }}>
-          <div style={{ width: 64, height: 64, borderRadius: 12, overflow: "hidden", flexShrink: 0, background: "var(--c-rose-50)" }}>
-            <img src={a.img || window.DN_IMG_FALLBACK} alt="" onError={window.imgFallback} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-          </div>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontWeight: 600, marginBottom: 4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: 14 }}>{a.title}</div>
-            <div style={{ fontSize: 12, color: "var(--c-mute)" }}>{a.date} · {a.read} de lectura · <span style={{ color: "var(--c-primary)", fontWeight: 600 }}>{a.cat}</span></div>
-          </div>
-          <span style={{ background: "#DCFCE7", color: "#166534", fontSize: 11, fontWeight: 700, padding: "4px 11px", borderRadius: 99, whiteSpace: "nowrap" }}>Publicado</span>
-        </div>
-      ))}
-    </div>
-  </div>
-);
-
 /* ── FAQs ──────────────────────────────────────────────────── */
 const FAQsSection = () => {
   const [faqs, setFaqs] = React.useState(window.FAQS || []);
@@ -1383,8 +1359,7 @@ const SECTIONS = [
   { id: "categories", label: "Categorías",  icon: "leaf"    },
   { id: "orders",     label: "Pedidos",     icon: "truck"   },
   { id: "reviews",    label: "Reseñas",     icon: "star"    },
-  { id: "articles",   label: "Artículos",   icon: "leaf"    },
-  { id: "faqs",       label: "FAQs",        icon: "shield"  },
+{ id: "faqs",       label: "FAQs",        icon: "shield"  },
 ];
 
 /* ── Admin Panel Shell ──────────────────────────────────────── */
@@ -1489,8 +1464,7 @@ const AdminPanel = ({ onLogout }) => {
         {section === "categories" && <CategoriesSection />}
         {section === "orders"     && <OrdersSection />}
         {section === "reviews"    && <ReviewsSection reviews={reviews} />}
-        {section === "articles"   && <ArticlesSection />}
-        {section === "faqs"       && <FAQsSection />}
+{section === "faqs"       && <FAQsSection />}
       </main>
 
       {/* Mobile drawer */}
