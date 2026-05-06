@@ -721,14 +721,98 @@ const OrdersSection = () => {
   );
 };
 
+/* ── Categorías ────────────────────────────────────────────── */
+const CategoriesSection = () => {
+  const [cats, setCats] = React.useState([...window.CATEGORIES]);
+  const [editing, setEditing] = React.useState(null);
+  const [editData, setEditData] = React.useState({});
+  const [saving, setSaving] = React.useState(false);
+  const [saved, setSaved] = React.useState(null);
+  const [saveErr, setSaveErr] = React.useState(null);
+
+  const startEdit = (c) => { setEditing(c.id); setEditData({ name: c.name, desc: c.desc, img: c.img }); setSaveErr(null); };
+  const cancelEdit = () => { setEditing(null); setEditData({}); setSaveErr(null); };
+
+  const saveEdit = async (id) => {
+    setSaving(true); setSaveErr(null);
+    try {
+      await window.updateDNCategory(id, { name: editData.name, description: editData.desc, img: editData.img });
+      const updated = cats.map((c) => c.id === id ? { ...c, name: editData.name, desc: editData.desc, img: editData.img } : c);
+      setCats(updated);
+      window.CATEGORIES = updated;
+      setEditing(null);
+      setSaved(id);
+      setTimeout(() => setSaved(null), 2500);
+    } catch(e) {
+      setSaveErr("Error al guardar. Reintentá.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const fieldStyle = { width: "100%", boxSizing: "border-box", padding: "8px 12px", borderRadius: 8, border: "1.5px solid var(--c-primary)", fontSize: 13, outline: "none", fontFamily: "inherit" };
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
+      <div>
+        <h2 style={{ fontFamily: "var(--ff-serif)", fontSize: 28, margin: "0 0 4px" }}>Categorías</h2>
+        <p style={{ color: "var(--c-mute)", fontSize: 14, margin: 0 }}>{cats.length} categorías en el catálogo.</p>
+      </div>
+
+      <div style={{ display: "grid", gap: 14 }}>
+        {cats.map((c) => {
+          const isEdit = editing === c.id;
+          const isSaved = saved === c.id;
+          return (
+            <div key={c.id} className="card" style={{ padding: "18px 22px", display: "grid", gridTemplateColumns: "72px 1fr auto", gap: 18, alignItems: "center", background: isEdit ? "var(--c-rose-50)" : isSaved ? "#F0FDF4" : "white", transition: "background .3s" }}>
+              <div style={{ width: 72, height: 72, borderRadius: 12, overflow: "hidden", background: "var(--c-rose-50)", flexShrink: 0 }}>
+                <img src={(isEdit ? editData.img : c.img) || window.DN_IMG_FALLBACK} onError={window.imgFallback} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              </div>
+
+              <div style={{ minWidth: 0 }}>
+                {isEdit ? (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                    <input value={editData.name} onChange={(e) => setEditData((d) => ({ ...d, name: e.target.value }))} placeholder="Nombre" style={fieldStyle} />
+                    <input value={editData.desc} onChange={(e) => setEditData((d) => ({ ...d, desc: e.target.value }))} placeholder="Descripción" style={fieldStyle} />
+                    <input value={editData.img} onChange={(e) => setEditData((d) => ({ ...d, img: e.target.value }))} placeholder="URL de imagen" style={{ ...fieldStyle, fontSize: 12, color: "var(--c-mute)" }} />
+                  </div>
+                ) : (
+                  <div>
+                    <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 3 }}>{c.name}</div>
+                    <div style={{ fontSize: 13, color: "var(--c-mute)", lineHeight: 1.4 }}>{c.desc}</div>
+                    {isSaved && <span style={{ fontSize: 12, color: "var(--c-success)", fontWeight: 700 }}>✓ Guardado</span>}
+                  </div>
+                )}
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: 6, flexShrink: 0 }}>
+                {saveErr && isEdit && <div style={{ color: "var(--c-danger)", fontSize: 11, marginBottom: 4 }}>{saveErr}</div>}
+                {isEdit ? (
+                  <React.Fragment>
+                    <button onClick={() => saveEdit(c.id)} disabled={saving} className="btn btn--primary btn--sm" style={{ padding: "7px 14px", fontSize: 13 }}>{saving ? "..." : "Guardar"}</button>
+                    <button onClick={cancelEdit} className="btn btn--ghost btn--sm" style={{ padding: "7px 14px", fontSize: 13 }}>Cancelar</button>
+                  </React.Fragment>
+                ) : (
+                  <button onClick={() => startEdit(c)} className="btn btn--ghost btn--sm" style={{ padding: "7px 14px", fontSize: 13 }}>Editar</button>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
 /* ── Sidebar nav config ─────────────────────────────────────── */
 const SECTIONS = [
-  { id: "dashboard", label: "Dashboard",  icon: "sparkle" },
-  { id: "products",  label: "Productos",  icon: "cart"    },
-  { id: "orders",    label: "Pedidos",    icon: "truck"   },
-  { id: "reviews",   label: "Reseñas",    icon: "star"    },
-  { id: "articles",  label: "Artículos",  icon: "leaf"    },
-  { id: "faqs",      label: "FAQs",       icon: "shield"  },
+  { id: "dashboard",  label: "Dashboard",   icon: "sparkle" },
+  { id: "products",   label: "Productos",   icon: "cart"    },
+  { id: "categories", label: "Categorías",  icon: "leaf"    },
+  { id: "orders",     label: "Pedidos",     icon: "truck"   },
+  { id: "reviews",    label: "Reseñas",     icon: "star"    },
+  { id: "articles",   label: "Artículos",   icon: "leaf"    },
+  { id: "faqs",       label: "FAQs",        icon: "shield"  },
 ];
 
 /* ── Admin Panel Shell ──────────────────────────────────────── */
@@ -825,12 +909,13 @@ const AdminPanel = ({ onLogout }) => {
           </div>
         </div>
 
-        {section === "dashboard" && <Dashboard products={products} reviews={reviews} />}
-        {section === "products"  && <ProductsSection products={products} setProducts={setProducts} loading={productsLoading} />}
-        {section === "orders"    && <OrdersSection />}
-        {section === "reviews"   && <ReviewsSection reviews={reviews} />}
-        {section === "articles"  && <ArticlesSection />}
-        {section === "faqs"      && <FAQsSection />}
+        {section === "dashboard"  && <Dashboard products={products} reviews={reviews} />}
+        {section === "products"   && <ProductsSection products={products} setProducts={setProducts} loading={productsLoading} />}
+        {section === "categories" && <CategoriesSection />}
+        {section === "orders"     && <OrdersSection />}
+        {section === "reviews"    && <ReviewsSection reviews={reviews} />}
+        {section === "articles"   && <ArticlesSection />}
+        {section === "faqs"       && <FAQsSection />}
       </main>
 
       {/* Mobile drawer */}

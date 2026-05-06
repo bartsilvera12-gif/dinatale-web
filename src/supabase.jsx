@@ -83,6 +83,11 @@ const loadDNCategories = async () => {
   }
 };
 
+/* ── Actualizar categoría en Supabase (admin) ──────────────── */
+const updateDNCategory = async (id, { name, description, img }) => {
+  return sbPatch("dn_categories", `id=eq.${id}`, { name, description, img: img || null });
+};
+
 /* ── Crear producto en Supabase (admin) ────────────────────── */
 const createDNProduct = async ({ name, category_id, price, oldPrice, stock, tag, images, description }) => {
   const [row] = await sbPost("dn_products", {
@@ -233,6 +238,6 @@ window.__sbLoadDNData = async () => {
 Object.assign(window, {
   sbGet, sbPatch, sbPost,
   loadDNProducts, loadDNCategories, loadDNReviews, loadDNArticles, loadDNFaqs,
-  createDNProduct, updateDNProduct, deleteDNProduct, saveDNOrder, loadDNOrders,
+  createDNProduct, updateDNProduct, deleteDNProduct, updateDNCategory, saveDNOrder, loadDNOrders,
   mapProduct
 });
