@@ -1,6 +1,26 @@
 /* App: route → view */
 const { StoreProvider, useStore } = window;
 
+class ErrorBoundary extends React.Component {
+  constructor(props) { super(props); this.state = { error: null }; }
+  static getDerivedStateFromError(e) { return { error: e }; }
+  render() {
+    if (this.state.error) {
+      return (
+        <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#FFF1F8", padding: 32 }}>
+          <div style={{ background: "white", borderRadius: 20, padding: "36px 32px", maxWidth: 560, width: "100%", boxShadow: "0 8px 40px rgba(200,38,138,0.12)" }}>
+            <div style={{ fontSize: 32, marginBottom: 12 }}>⚠️</div>
+            <h2 style={{ fontFamily: "serif", fontSize: 22, margin: "0 0 12px", color: "#991B1B" }}>Error al cargar el panel</h2>
+            <pre style={{ fontSize: 12, background: "#FEE2E2", padding: 16, borderRadius: 10, overflowX: "auto", color: "#7F1D1D", margin: 0, whiteSpace: "pre-wrap", wordBreak: "break-word" }}>{String(this.state.error)}</pre>
+            <button onClick={() => window.location.reload()} style={{ marginTop: 20, padding: "10px 24px", borderRadius: 999, background: "#E84DA3", color: "white", border: "none", cursor: "pointer", fontFamily: "inherit", fontWeight: 600 }}>Recargar</button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 const Views = () => {
   const { route } = useStore();
   switch (route.name) {
@@ -86,9 +106,11 @@ const App = () => {
   );
 
   return (
-    <window.StoreProvider>
-      <AppShell />
-    </window.StoreProvider>
+    <ErrorBoundary>
+      <window.StoreProvider>
+        <AppShell />
+      </window.StoreProvider>
+    </ErrorBoundary>
   );
 };
 
