@@ -41,8 +41,9 @@ const AdmSelect = ({ value, onChange, children, style }) => {
       {open && (
         <div style={{
           position: "absolute", top: "calc(100% + 6px)", left: 0, right: 0, zIndex: 999,
-          background: "var(--c-ink)", borderRadius: 14, padding: "6px",
-          boxShadow: "0 12px 40px -8px rgba(31,23,32,0.4), 0 2px 8px rgba(0,0,0,0.15)",
+          background: "white", borderRadius: 14, padding: "6px",
+          border: "1.5px solid var(--c-border)",
+          boxShadow: "0 12px 40px -8px rgba(200,38,138,0.15), 0 4px 12px rgba(0,0,0,0.08)",
           animation: "admDropIn 0.15s ease"
         }}>
           {options.map((opt) => {
@@ -51,12 +52,12 @@ const AdmSelect = ({ value, onChange, children, style }) => {
               <div key={opt.value} onClick={() => pick(opt)} style={{
                 padding: "10px 14px", cursor: "pointer", fontSize: 14, borderRadius: 9,
                 display: "flex", alignItems: "center", justifyContent: "space-between",
-                color: isSelected ? "var(--c-primary)" : "rgba(255,255,255,0.82)",
+                color: isSelected ? "var(--c-primary-deep)" : "var(--c-ink)",
                 fontWeight: isSelected ? 600 : 400,
                 transition: "background .12s"
               }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.08)"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = "var(--c-rose-50)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = isSelected ? "var(--c-rose-50)" : "transparent"; }}
               >
                 <span>{opt.label}</span>
                 {isSelected && (
