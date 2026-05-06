@@ -9,9 +9,14 @@ const ProductsView = () => {
 
   const items = React.useMemo(() => {
     let list = PRODUCTS.slice();
-    if (cat !== "all") list = list.filter((p) => p.category === cat);
+    if (cat !== "all") {
+      const catName = (CATEGORIES.find((c) => c.id === cat)?.name || "").toLowerCase();
+      if (catName === "recomendados")   list = list.filter((p) => p.tag === "rec");
+      else if (catName === "novedades") list = list.filter((p) => p.tag === "new");
+      else                              list = list.filter((p) => p.category === cat);
+    }
     if (q.trim()) list = list.filter((p) => p.name.toLowerCase().includes(q.toLowerCase()));
-    if (sort === "price-asc") list.sort((a, b) => a.price - b.price);
+    if (sort === "price-asc")  list.sort((a, b) => a.price - b.price);
     if (sort === "price-desc") list.sort((a, b) => b.price - a.price);
     if (sort === "new") list.sort((a, b) => (b.tag === "new") - (a.tag === "new"));
     if (sort === "top") list.sort((a, b) => (b.tag === "top") - (a.tag === "top"));
