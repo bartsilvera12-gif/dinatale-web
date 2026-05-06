@@ -25,7 +25,7 @@ const CartView = () => {
           {cartItems.map((p) => (
             <div key={p.id} className="card" style={{ display: "grid", gridTemplateColumns: "100px 1fr auto", gap: 18, padding: 16, alignItems: "center" }}>
               <div style={{ width: 100, height: 100, borderRadius: 12, overflow: "hidden", background: "var(--c-rose-50)" }}>
-                <img src={p.images[0]} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                <img src={p.images[0] || window.DN_IMG_FALLBACK} alt="" onError={window.imgFallback} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               </div>
               <div>
                 <div style={{ fontSize: 11, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--c-mute)", marginBottom: 4 }}>

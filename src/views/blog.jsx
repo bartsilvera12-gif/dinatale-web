@@ -28,7 +28,7 @@ const BlogView = () => {
       {items[0] && (
         <article className="card" style={{ overflow: "hidden", display: "grid", gridTemplateColumns: "minmax(0, 1.1fr) minmax(0, 1fr)", marginBottom: 32, cursor: "pointer" }} className="dn-feat">
           <div style={{ aspectRatio: "16 / 11", background: "var(--c-rose-50)" }}>
-            <img src={items[0].img} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            <img src={items[0].img || window.DN_IMG_FALLBACK} alt="" onError={window.imgFallback} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           </div>
           <div style={{ padding: 36, display: "flex", flexDirection: "column", justifyContent: "center", gap: 12 }}>
             <div style={{ fontSize: 12, letterSpacing: "0.16em", textTransform: "uppercase", color: "var(--c-primary-deep)", fontWeight: 600 }}>{items[0].cat} · destacado</div>

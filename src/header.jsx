@@ -89,7 +89,7 @@ const Header = () => {
                             onMouseEnter={(e) => e.currentTarget.style.background = "var(--c-rose-50)"}
                             onMouseLeave={(e) => e.currentTarget.style.background = "none"}>
                       <div style={{ width: 48, height: 48, borderRadius: 8, overflow: "hidden", background: "var(--c-rose-50)", flexShrink: 0 }}>
-                        <img src={p.images[0]} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="" />
+                        <img src={p.images[0] || window.DN_IMG_FALLBACK} onError={window.imgFallback} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt="" />
                       </div>
                       <div style={{ flex: 1 }}>
                         <div style={{ fontWeight: 500, fontSize: 14 }}>{p.name}</div>

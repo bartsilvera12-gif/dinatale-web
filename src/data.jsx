@@ -1,6 +1,11 @@
 /* Mock catalog: products, categories, reviews, articles, FAQ */
 const fmtGs = (n) => "Gs. " + n.toLocaleString("es-PY");
 
+const DN_IMG_FALLBACK = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect width='400' height='400' fill='%23FFF1F8'/%3E%3Ctext x='200' y='230' font-family='Georgia%2Cserif' font-size='72' fill='%23F5D5E8' text-anchor='middle'%3EDN%3C/text%3E%3C/svg%3E";
+const imgFallback = (e) => { e.target.onerror = null; e.target.src = DN_IMG_FALLBACK; };
+window.DN_IMG_FALLBACK = DN_IMG_FALLBACK;
+window.imgFallback = imgFallback;
+
 const CATEGORIES = [
   { id: "facial", name: "Cuidado facial", desc: "Limpieza, hidratación y rituales que respetan tu piel.", img: "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=900&q=80" },
   { id: "corporal", name: "Cuidado corporal", desc: "Texturas que envuelven y nutren cada centímetro.", img: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=900&q=80" },

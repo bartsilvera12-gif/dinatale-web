@@ -245,7 +245,7 @@ const ProductsSection = ({ products, setProducts, loading }) => {
                     <td style={{ padding: "13px 16px" }}>
                       <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
                         <div style={{ width: 38, height: 38, borderRadius: 9, overflow: "hidden", background: "var(--c-rose-50)", flexShrink: 0 }}>
-                          <img src={p.images[0]} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                          <img src={p.images[0] || window.DN_IMG_FALLBACK} alt="" onError={window.imgFallback} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                         </div>
                         <span style={{ fontWeight: 500, maxWidth: 170, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", display: "block" }}>{p.name}</span>
                       </div>
@@ -253,13 +253,13 @@ const ProductsSection = ({ products, setProducts, loading }) => {
                     <td style={{ padding: "13px 16px", color: "var(--c-mute)", whiteSpace: "nowrap" }}>
                       {window.CATEGORIES.find((c) => c.id === p.category)?.name ?? p.category}
                     </td>
-                    <td style={{ padding: "13px 16px", whiteSpace: "nowrap" }}>
+                    <td style={{ padding: "10px 12px", whiteSpace: "nowrap" }}>
                       {isEdit
-                        ? <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                        ? <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
                             <input type="number" value={editData.price} onChange={(e) => setEditData((d) => ({ ...d, price: e.target.value }))}
-                              placeholder="Precio actual" style={{ width: 130, padding: "7px 10px", border: "1.5px solid var(--c-primary)", borderRadius: 8, fontSize: 13, outline: "none", fontFamily: "inherit" }} />
+                              placeholder="Precio" style={{ width: 108, padding: "5px 8px", border: "1.5px solid var(--c-primary)", borderRadius: 7, fontSize: 12, outline: "none", fontFamily: "inherit" }} />
                             <input type="number" value={editData.oldPrice} onChange={(e) => setEditData((d) => ({ ...d, oldPrice: e.target.value }))}
-                              placeholder="Precio anterior" style={{ width: 130, padding: "7px 10px", border: "1.5px solid var(--c-border)", borderRadius: 8, fontSize: 12, outline: "none", fontFamily: "inherit", color: "var(--c-mute)" }} />
+                              placeholder="Ant." style={{ width: 108, padding: "5px 8px", border: "1.5px solid var(--c-border)", borderRadius: 7, fontSize: 11, outline: "none", fontFamily: "inherit", color: "var(--c-mute)" }} />
                           </div>
                         : <div>
                             <span style={{ fontWeight: 600 }}>{fmtGs(p.price)}</span>
@@ -267,19 +267,19 @@ const ProductsSection = ({ products, setProducts, loading }) => {
                           </div>
                       }
                     </td>
-                    <td style={{ padding: "13px 16px" }}>
+                    <td style={{ padding: "10px 12px" }}>
                       {isEdit
                         ? <input type="number" min="0" value={editData.stock} onChange={(e) => setEditData((d) => ({ ...d, stock: e.target.value }))}
-                            style={{ width: 72, padding: "7px 10px", border: "1.5px solid var(--c-primary)", borderRadius: 8, fontSize: 13, outline: "none", fontFamily: "inherit" }} />
+                            style={{ width: 58, padding: "5px 8px", border: "1.5px solid var(--c-primary)", borderRadius: 7, fontSize: 12, outline: "none", fontFamily: "inherit" }} />
                         : <span style={{ color: p.stock === 0 ? "var(--c-danger)" : p.stock <= 5 ? "var(--c-warn)" : "var(--c-success)", fontWeight: 700 }}>
                             {p.stock === 0 ? "Sin stock" : p.stock}
                           </span>
                       }
                     </td>
-                    <td style={{ padding: "13px 16px" }}>
+                    <td style={{ padding: "10px 12px" }}>
                       {isEdit
                         ? <select value={editData.tag} onChange={(e) => setEditData((d) => ({ ...d, tag: e.target.value }))}
-                            style={{ padding: "7px 10px", border: "1.5px solid var(--c-primary)", borderRadius: 8, fontSize: 13, fontFamily: "inherit", outline: "none" }}>
+                            style={{ padding: "5px 8px", border: "1.5px solid var(--c-primary)", borderRadius: 7, fontSize: 12, fontFamily: "inherit", outline: "none", maxWidth: 100 }}>
                             <option value="">Sin tag</option>
                             <option value="top">⭐ Top</option>
                             <option value="new">✨ Nuevo</option>
@@ -289,15 +289,15 @@ const ProductsSection = ({ products, setProducts, loading }) => {
                         : <TagPill tag={p.tag} />
                       }
                     </td>
-                    <td style={{ padding: "13px 16px", color: "#F59E0B", fontWeight: 700, whiteSpace: "nowrap" }}>
+                    <td style={{ padding: "10px 12px", color: "#F59E0B", fontWeight: 700, whiteSpace: "nowrap" }}>
                       ⭐ {p.rating} <span style={{ color: "var(--c-mute)", fontWeight: 400, fontSize: 12 }}>({p.reviews})</span>
                     </td>
-                    <td style={{ padding: "13px 16px", whiteSpace: "nowrap" }}>
+                    <td style={{ padding: "10px 12px", whiteSpace: "nowrap" }}>
                       {saveErr && isEdit && <div style={{ color: "var(--c-danger)", fontSize: 11, marginBottom: 4 }}>{saveErr}</div>}
                       {isEdit
-                        ? <div style={{ display: "flex", gap: 6 }}>
-                            <button onClick={() => saveEdit(p.id)} disabled={saving} className="btn btn--primary btn--sm">{saving ? "Guardando..." : "Guardar"}</button>
-                            <button onClick={cancelEdit} className="btn btn--ghost btn--sm">Cancelar</button>
+                        ? <div style={{ display: "flex", gap: 5 }}>
+                            <button onClick={() => saveEdit(p.id)} disabled={saving} className="btn btn--primary btn--sm" style={{ padding: "6px 12px", fontSize: 12 }}>{saving ? "..." : "Guardar"}</button>
+                            <button onClick={cancelEdit} className="btn btn--ghost btn--sm" style={{ padding: "6px 10px", fontSize: 12 }}>✕</button>
                           </div>
                         : isSaved
                           ? <span style={{ color: "var(--c-success)", fontSize: 12, fontWeight: 700 }}>✓ Guardado</span>
@@ -361,7 +361,7 @@ const ArticlesSection = () => (
       {window.ARTICLES.map((a) => (
         <div key={a.id} className="card" style={{ padding: "18px 22px", display: "flex", gap: 16, alignItems: "center" }}>
           <div style={{ width: 64, height: 64, borderRadius: 12, overflow: "hidden", flexShrink: 0, background: "var(--c-rose-50)" }}>
-            <img src={a.img} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            <img src={a.img || window.DN_IMG_FALLBACK} alt="" onError={window.imgFallback} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontWeight: 600, marginBottom: 4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: 14 }}>{a.title}</div>

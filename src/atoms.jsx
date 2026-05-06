@@ -51,8 +51,9 @@ const ProductCard = ({ product, onQuick }) => {
     <article className="card" style={{ display: "flex", flexDirection: "column", overflow: "hidden", position: "relative" }}>
       <div style={{ position: "relative", aspectRatio: "1 / 1", background: "var(--c-rose-50)", overflow: "hidden", cursor: "pointer" }}
            onClick={() => setRoute("product", { id: product.id })}>
-        <img src={product.images[0]} alt={product.name} loading="lazy"
+        <img src={product.images[0] || window.DN_IMG_FALLBACK} alt={product.name} loading="lazy"
              style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform .6s ease" }}
+             onError={window.imgFallback}
              onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.06)"}
              onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"} />
         <div style={{ position: "absolute", top: 12, left: 12, display: "flex", gap: 6, flexWrap: "wrap" }}>
@@ -107,7 +108,8 @@ const ProductCard = ({ product, onQuick }) => {
 const CategoryCard = ({ cat, onClick }) => (
   <article className="card" style={{ overflow: "hidden", cursor: "pointer", display: "flex", flexDirection: "column" }} onClick={onClick}>
     <div style={{ aspectRatio: "4 / 3", background: "var(--c-rose-50)", overflow: "hidden", position: "relative" }}>
-      <img src={cat.img} alt={cat.name} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform .6s ease" }}
+      <img src={cat.img || window.DN_IMG_FALLBACK} alt={cat.name} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform .6s ease" }}
+           onError={window.imgFallback}
            onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.05)"}
            onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"} />
       <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(255,255,255,0) 50%, rgba(31,23,32,0.45) 100%)" }}/>
@@ -140,7 +142,7 @@ const ReviewCard = ({ r }) => (
 const BlogCard = ({ a }) => (
   <article className="card" style={{ overflow: "hidden", display: "flex", flexDirection: "column", cursor: "pointer" }}>
     <div style={{ aspectRatio: "16 / 10", overflow: "hidden", background: "var(--c-rose-50)" }}>
-      <img src={a.img} alt={a.title} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+      <img src={a.img || window.DN_IMG_FALLBACK} alt={a.title} loading="lazy" onError={window.imgFallback} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
     </div>
     <div style={{ padding: "20px 22px 24px", display: "flex", flexDirection: "column", gap: 10, flex: 1 }}>
       <div style={{ display: "flex", gap: 10, alignItems: "center", fontSize: 12, color: "var(--c-mute)" }}>
@@ -184,7 +186,7 @@ const QuickView = () => {
           <window.Icon name="close" size={16} />
         </button>
         <div style={{ aspectRatio: "1 / 1", background: "var(--c-rose-50)" }}>
-          <img src={p.images[0]} alt={p.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          <img src={p.images[0] || window.DN_IMG_FALLBACK} alt={p.name} onError={window.imgFallback} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
         </div>
         <div style={{ padding: 32, display: "flex", flexDirection: "column", gap: 14 }}>
           <span style={{ fontSize: 11, letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--c-mute)" }}>{CATEGORIES.find((c) => c.id === p.category)?.name}</span>

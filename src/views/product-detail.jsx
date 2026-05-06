@@ -39,14 +39,14 @@ const ProductDetailView = () => {
         {/* Gallery */}
         <div>
           <div style={{ aspectRatio: "1 / 1", borderRadius: 24, overflow: "hidden", background: "var(--c-rose-50)", marginBottom: 14, position: "relative" }}>
-            <img src={product.images[imgIdx]} alt={product.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            <img src={product.images[imgIdx] || window.DN_IMG_FALLBACK} alt={product.name} onError={window.imgFallback} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
             {product.tag && <div style={{ position: "absolute", top: 18, left: 18 }}><window.Tag tag={product.tag} /></div>}
           </div>
           {product.images.length > 1 && (
             <div style={{ display: "flex", gap: 10 }}>
               {product.images.map((src, i) => (
                 <button key={i} onClick={() => setImgIdx(i)} style={{ width: 80, height: 80, borderRadius: 14, overflow: "hidden", padding: 0, border: "2px solid " + (i === imgIdx ? "var(--c-primary)" : "transparent"), cursor: "pointer", background: "var(--c-rose-50)" }}>
-                  <img src={src} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  <img src={src || window.DN_IMG_FALLBACK} alt="" onError={window.imgFallback} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                 </button>
               ))}
             </div>

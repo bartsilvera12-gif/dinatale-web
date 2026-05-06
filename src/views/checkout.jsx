@@ -160,7 +160,7 @@ const CheckoutView = () => {
               {cartItems.map((p) => (
                 <div key={p.id} style={{ display: "flex", gap: 12, fontSize: 13 }}>
                   <div style={{ width: 50, height: 50, borderRadius: 8, background: "var(--c-rose-50)", overflow: "hidden", flexShrink: 0 }}>
-                    <img src={p.images[0]} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    <img src={p.images[0] || window.DN_IMG_FALLBACK} alt="" onError={window.imgFallback} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontWeight: 500, fontSize: 13, lineHeight: 1.3 }}>{p.name}</div>
