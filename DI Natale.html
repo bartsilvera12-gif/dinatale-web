@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>DI NATALE — Belleza, estética y bienestar premium</title>
+<meta name="description" content="DI NATALE: productos de estética, belleza y cuidado personal seleccionados con criterio y asesoría profesional." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    /* Glow rosado palette */
+    --c-primary: #E84DA3;       /* rosa chicle / fucsia */
+    --c-primary-deep: #C8268A;
+    --c-secondary: #C7A4F4;     /* lila suave */
+    --c-rose-100: #FCE7F3;      /* rosa claro */
+    --c-rose-50: #FFF1F8;
+    --c-bg: #FFF9FC;            /* blanco perlado */
+    --c-card: #FFFFFF;
+    --c-ink: #1F1720;
+    --c-ink-2: #4A3B44;
+    --c-mute: #7A6873;
+    --c-border: #F5D5E8;
+    --c-border-soft: #FBE6F1;
+    --c-success: #2E8F66;
+    --c-warn: #C77A2B;
+    --c-danger: #C8385F;
+    --c-wa: #25D366;
+
+    --grad-soft: linear-gradient(135deg, #FFF1F8 0%, #F5E9FF 60%, #FFE6F4 100%);
+    --grad-hero: radial-gradient(120% 90% at 20% 10%, #FFE3F2 0%, #FFF6FB 35%, #F4E6FF 75%, #FCE7F3 100%);
+    --grad-brand: linear-gradient(120deg, #E84DA3 0%, #B96BD8 60%, #C7A4F4 100%);
+    --grad-brand-soft: linear-gradient(120deg, #FFB6DC 0%, #E1B8F2 100%);
+
+    --shadow-1: 0 1px 2px rgba(232, 77, 163, 0.05), 0 1px 1px rgba(31, 23, 32, 0.03);
+    --shadow-2: 0 6px 20px -8px rgba(200, 38, 138, 0.18), 0 2px 6px -3px rgba(31, 23, 32, 0.05);
+    --shadow-3: 0 18px 40px -16px rgba(200, 38, 138, 0.28), 0 6px 14px -8px rgba(31, 23, 32, 0.08);
+    --shadow-glow: 0 0 0 1px rgba(232, 77, 163, 0.08), 0 20px 50px -20px rgba(232, 77, 163, 0.35);
+
+    --r-sm: 10px;
+    --r-md: 14px;
+    --r-lg: 20px;
+    --r-xl: 28px;
+    --r-2xl: 36px;
+    --r-pill: 999px;
+
+    --ff-serif: "Fraunces", "Cormorant Garamond", Georgia, serif;
+    --ff-display: "Cormorant Garamond", "Fraunces", Georgia, serif;
+    --ff-sans: "Outfit", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+    --container: 1280px;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--ff-sans);
+    color: var(--c-ink);
+    background: var(--c-bg);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    line-height: 1.5;
+  }
+
+  /* Decorative ambient backdrop */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: -10vh -10vw;
+    background:
+      radial-gradient(40% 30% at 80% 12%, rgba(199, 164, 244, 0.35), transparent 60%),
+      radial-gradient(35% 25% at 5% 85%, rgba(232, 77, 163, 0.18), transparent 65%),
+      radial-gradient(30% 25% at 95% 70%, rgba(252, 231, 243, 0.6), transparent 70%);
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; }
+  img { display: block; max-width: 100%; }
+
+  .container {
+    width: 100%;
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  @media (min-width: 768px) { .container { padding: 0 32px; } }
+
+  /* Brand mark + wordmark recreation */
+  .dn-mark {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .dn-mark__icon {
+    width: 38px;
+    height: 38px;
+    background-image: url("assets/dinatale-icon.png");
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: drop-shadow(0 2px 6px rgba(232, 77, 163, 0.2));
+  }
+  .dn-mark__word {
+    font-family: var(--ff-display);
+    font-weight: 500;
+    font-size: 22px;
+    letter-spacing: 0.18em;
+    line-height: 1;
+    background: var(--grad-brand);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-transform: uppercase;
+  }
+  .dn-mark--lg .dn-mark__icon { width: 64px; height: 64px; }
+  .dn-mark--lg .dn-mark__word { font-size: 38px; letter-spacing: 0.22em; }
+  .dn-mark--xl .dn-mark__icon { width: 96px; height: 96px; }
+  .dn-mark--xl .dn-mark__word { font-size: 56px; letter-spacing: 0.24em; font-weight: 500; }
+
+  /* Eyebrow */
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--c-primary-deep);
+    font-weight: 500;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 28px;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.7;
+  }
+  .eyebrow.center::after {
+    content: "";
+    width: 28px;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.7;
+  }
+
+  /* Section title */
+  .h-display {
+    font-family: var(--ff-serif);
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: var(--c-ink);
+  }
+  .h-display em { font-style: italic; color: var(--c-primary-deep); }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 22px;
+    border-radius: var(--r-pill);
+    font-weight: 500;
+    font-size: 14px;
+    letter-spacing: 0.02em;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: transform .2s ease, box-shadow .2s ease, background .2s ease, color .2s ease, border-color .2s ease;
+    white-space: nowrap;
+  }
+  .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+  .btn--primary {
+    background: var(--grad-brand);
+    color: white;
+    box-shadow: var(--shadow-2);
+  }
+  .btn--primary:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-3);
+  }
+  .btn--ghost {
+    background: rgba(255,255,255,0.6);
+    color: var(--c-ink);
+    border-color: var(--c-border);
+    backdrop-filter: blur(8px);
+  }
+  .btn--ghost:hover { background: white; border-color: var(--c-primary); color: var(--c-primary-deep); }
+  .btn--outline {
+    background: transparent;
+    color: var(--c-primary-deep);
+    border-color: var(--c-primary);
+  }
+  .btn--outline:hover { background: var(--c-rose-50); }
+  .btn--wa {
+    background: #25D366;
+    color: white;
+  }
+  .btn--wa:hover { background: #1FB957; }
+  .btn--sm { padding: 9px 14px; font-size: 12.5px; gap: 6px; }
+  .btn--lg { padding: 17px 28px; font-size: 15px; }
+  .btn--block { width: 100%; }
+
+  /* Badges */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: var(--r-pill);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .badge--new { background: linear-gradient(120deg, #E84DA3, #C7A4F4); color: white; }
+  .badge--sale { background: #FFE0EB; color: #C8268A; }
+  .badge--top { background: #F0E5FF; color: #6B3DBF; }
+  .badge--rec { background: #FFF1F8; color: #C8268A; border: 1px solid #FCE7F3; }
+  .badge--stock-ok { background: #E8F5EF; color: #2E8F66; }
+  .badge--stock-low { background: #FFF3E5; color: #C77A2B; }
+  .badge--stock-out { background: #F4E5EA; color: #8B3A55; }
+
+  /* Stars */
+  .stars { display: inline-flex; gap: 2px; color: #E84DA3; font-size: 14px; line-height: 1; }
+  .stars svg { width: 14px; height: 14px; }
+
+  /* Card */
+  .card {
+    background: var(--c-card);
+    border: 1px solid var(--c-border-soft);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-1);
+    transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+  }
+  .card:hover { box-shadow: var(--shadow-2); border-color: var(--c-border); }
+
+  /* Input */
+  .input, .select, .textarea {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: var(--r-md);
+    border: 1px solid var(--c-border);
+    background: white;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--c-ink);
+    transition: border-color .2s ease, box-shadow .2s ease;
+  }
+  .input:focus, .select:focus, .textarea:focus {
+    outline: none;
+    border-color: var(--c-primary);
+    box-shadow: 0 0 0 3px rgba(232, 77, 163, 0.12);
+  }
+  .label {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--c-mute);
+    font-weight: 500;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  /* Underline link */
+  .ulink {
+    color: var(--c-primary-deep);
+    font-weight: 500;
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 1px;
+    transition: color .2s ease;
+  }
+  .ulink:hover { color: var(--c-primary); }
+
+  /* Page transition */
+  .view-fade {
+    animation: viewFade 360ms cubic-bezier(.2,.7,.2,1) both;
+  }
+  @keyframes viewFade {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  /* Reveal on scroll */
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+
+  /* Floral decorative SVG positioning helpers */
+  .floral { position: absolute; pointer-events: none; opacity: 0.7; }
+
+  /* Scrollbar tweaks */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #F5D5E8; border-radius: 999px; border: 2px solid #FFF9FC; }
+  ::-webkit-scrollbar-thumb:hover { background: #E84DA3; }
+
+  /* Editmode style overrides */
+</style>
+
+<!-- Tweaks defaults persisted via host protocol -->
+<script>
+  window.__DN_TWEAKS = /*EDITMODE-BEGIN*/{
+    "palette": "coral",
+    "displayFont": "Fraunces",
+    "showFloating": true,
+    "compact": false
+  }/*EDITMODE-END*/;
+</script>
+</head>
+
+<body>
+<div id="root"></div>
+
+<!-- React 18.3.1 pinned + Babel -->
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="src/icons.jsx"></script>
+<script type="text/babel" src="src/data.jsx"></script>
+<script type="text/babel" src="src/store.jsx"></script>
+<script type="text/babel" src="src/atoms.jsx"></script>
+<script type="text/babel" src="src/header.jsx"></script>
+<script type="text/babel" src="src/footer.jsx"></script>
+<script type="text/babel" src="src/whatsapp.jsx"></script>
+<script type="text/babel" src="src/views/home.jsx"></script>
+<script type="text/babel" src="src/views/products.jsx"></script>
+<script type="text/babel" src="src/views/categories.jsx"></script>
+<script type="text/babel" src="src/views/product-detail.jsx"></script>
+<script type="text/babel" src="src/views/blog.jsx"></script>
+<script type="text/babel" src="src/views/reviews.jsx"></script>
+<script type="text/babel" src="src/views/faq.jsx"></script>
+<script type="text/babel" src="src/views/about.jsx"></script>
+<script type="text/babel" src="src/views/cart.jsx"></script>
+<script type="text/babel" src="src/views/checkout.jsx"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="src/app.jsx"></script>
+</body>
+</html>
