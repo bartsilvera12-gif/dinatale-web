@@ -2,11 +2,6 @@
 
 const ADMIN_PASS = "dinatale2026";
 
-const adminStorage = {
-  get: (k, def) => { try { return JSON.parse(localStorage.getItem("dn_adm_" + k)) ?? def; } catch(e) { return def; } },
-  set: (k, v) => { try { localStorage.setItem("dn_adm_" + k, JSON.stringify(v)); } catch(e) {} }
-};
-
 /* ── Login ─────────────────────────────────────────────────── */
 const AdminLogin = ({ onAuth }) => {
   const [pass, setPass] = React.useState("");
@@ -152,12 +147,14 @@ const Dashboard = ({ products, reviews }) => {
 };
 
 /* ── Productos ─────────────────────────────────────────────── */
-const ProductsSection = ({ products, setProducts }) => {
+const ProductsSection = ({ products, setProducts, loading }) => {
   const [editing, setEditing] = React.useState(null);
   const [editData, setEditData] = React.useState({});
   const [search, setSearch] = React.useState("");
   const [filterCat, setFilterCat] = React.useState("all");
   const [saved, setSaved] = React.useState(null);
+  const [saving, setSaving] = React.useState(false);
+  const [saveErr, setSaveErr] = React.useState(null);
 
   const filtered = products.filter((p) => {
     const matchQ   = !search.trim() || p.name.toLowerCase().includes(search.toLowerCase());
@@ -165,20 +162,32 @@ const ProductsSection = ({ products, setProducts }) => {
     return matchQ && matchCat;
   });
 
-  const startEdit = (p) => { setEditing(p.id); setEditData({ price: p.price, stock: p.stock, tag: p.tag ?? "" }); };
-  const cancelEdit = () => { setEditing(null); setEditData({}); };
+  const startEdit = (p) => { setEditing(p.id); setEditData({ price: p.price, stock: p.stock, tag: p.tag ?? "", oldPrice: p.oldPrice ?? "" }); };
+  const cancelEdit = () => { setEditing(null); setEditData({}); setSaveErr(null); };
 
-  const saveEdit = (id) => {
-    const updated = products.map((p) => p.id === id
-      ? { ...p, price: Number(editData.price) || p.price, stock: Math.max(0, Number(editData.stock) || 0), tag: editData.tag || null }
-      : p
-    );
-    setProducts(updated);
-    window.PRODUCTS = updated;
-    adminStorage.set("products_override", updated.map(({ id, price, stock, tag }) => ({ id, price, stock, tag })));
-    setEditing(null);
-    setSaved(id);
-    setTimeout(() => setSaved(null), 2500);
+  const saveEdit = async (id) => {
+    setSaving(true); setSaveErr(null);
+    try {
+      await window.updateDNProduct(id, {
+        price:    Number(editData.price)    || products.find(p => p.id === id).price,
+        stock:    Math.max(0, Number(editData.stock) || 0),
+        tag:      editData.tag || null,
+        oldPrice: editData.oldPrice ? Number(editData.oldPrice) : null
+      });
+      const updated = products.map((p) => p.id === id
+        ? { ...p, price: Number(editData.price) || p.price, stock: Math.max(0, Number(editData.stock) || 0), tag: editData.tag || null, oldPrice: editData.oldPrice ? Number(editData.oldPrice) : null }
+        : p
+      );
+      setProducts(updated);
+      window.PRODUCTS = updated;
+      setEditing(null);
+      setSaved(id);
+      setTimeout(() => setSaved(null), 2500);
+    } catch(e) {
+      setSaveErr("Error al guardar. Reintentá.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -232,9 +241,16 @@ const ProductsSection = ({ products, setProducts }) => {
                     </td>
                     <td style={{ padding: "13px 16px", whiteSpace: "nowrap" }}>
                       {isEdit
-                        ? <input type="number" value={editData.price} onChange={(e) => setEditData((d) => ({ ...d, price: e.target.value }))}
-                            style={{ width: 120, padding: "7px 10px", border: "1.5px solid var(--c-primary)", borderRadius: 8, fontSize: 13, outline: "none", fontFamily: "inherit" }} />
-                        : <span style={{ fontWeight: 600 }}>{fmtGs(p.price)}</span>
+                        ? <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                            <input type="number" value={editData.price} onChange={(e) => setEditData((d) => ({ ...d, price: e.target.value }))}
+                              placeholder="Precio actual" style={{ width: 130, padding: "7px 10px", border: "1.5px solid var(--c-primary)", borderRadius: 8, fontSize: 13, outline: "none", fontFamily: "inherit" }} />
+                            <input type="number" value={editData.oldPrice} onChange={(e) => setEditData((d) => ({ ...d, oldPrice: e.target.value }))}
+                              placeholder="Precio anterior" style={{ width: 130, padding: "7px 10px", border: "1.5px solid var(--c-border)", borderRadius: 8, fontSize: 12, outline: "none", fontFamily: "inherit", color: "var(--c-mute)" }} />
+                          </div>
+                        : <div>
+                            <span style={{ fontWeight: 600 }}>{fmtGs(p.price)}</span>
+                            {p.oldPrice && <div style={{ fontSize: 11, color: "var(--c-mute)", textDecoration: "line-through" }}>{fmtGs(p.oldPrice)}</div>}
+                          </div>
                       }
                     </td>
                     <td style={{ padding: "13px 16px" }}>
@@ -263,9 +279,10 @@ const ProductsSection = ({ products, setProducts }) => {
                       ⭐ {p.rating} <span style={{ color: "var(--c-mute)", fontWeight: 400, fontSize: 12 }}>({p.reviews})</span>
                     </td>
                     <td style={{ padding: "13px 16px", whiteSpace: "nowrap" }}>
+                      {saveErr && isEdit && <div style={{ color: "var(--c-danger)", fontSize: 11, marginBottom: 4 }}>{saveErr}</div>}
                       {isEdit
                         ? <div style={{ display: "flex", gap: 6 }}>
-                            <button onClick={() => saveEdit(p.id)} className="btn btn--primary btn--sm">Guardar</button>
+                            <button onClick={() => saveEdit(p.id)} disabled={saving} className="btn btn--primary btn--sm">{saving ? "Guardando..." : "Guardar"}</button>
                             <button onClick={cancelEdit} className="btn btn--ghost btn--sm">Cancelar</button>
                           </div>
                         : isSaved
@@ -361,10 +378,88 @@ const FAQsSection = () => (
   </div>
 );
 
+/* ── Pedidos ────────────────────────────────────────────────── */
+const OrdersSection = () => {
+  const [orders, setOrders] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    window.loadDNOrders().then((data) => { setOrders(data); setLoading(false); });
+  }, []);
+
+  const statusColor = (s) => ({
+    pending:    { bg: "#FEF3C7", color: "#92400E", label: "Pendiente"   },
+    confirmed:  { bg: "#DCFCE7", color: "#166534", label: "Confirmado"  },
+    shipped:    { bg: "#DBEAFE", color: "#1E40AF", label: "Enviado"     },
+    delivered:  { bg: "#D1FAE5", color: "#065F46", label: "Entregado"   },
+    cancelled:  { bg: "#FEE2E2", color: "#991B1B", label: "Cancelado"   },
+  })[s] || { bg: "#F3F4F6", color: "#374151", label: s };
+
+  if (loading) return (
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: 80, color: "var(--c-mute)" }}>
+      Cargando pedidos desde Supabase...
+    </div>
+  );
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
+      <div>
+        <h2 style={{ fontFamily: "var(--ff-serif)", fontSize: 28, margin: "0 0 4px" }}>Pedidos</h2>
+        <p style={{ color: "var(--c-mute)", fontSize: 14, margin: 0 }}>{orders.length} pedidos registrados.</p>
+      </div>
+
+      {orders.length === 0 ? (
+        <div className="card" style={{ padding: "48px 24px", textAlign: "center", color: "var(--c-mute)" }}>
+          <div style={{ fontSize: 40, marginBottom: 12 }}>📦</div>
+          <p style={{ margin: 0 }}>Aún no hay pedidos registrados.</p>
+          <p style={{ fontSize: 13, marginTop: 6 }}>Los pedidos del checkout se guardarán aquí automáticamente.</p>
+        </div>
+      ) : (
+        <div className="card" style={{ padding: 0, overflow: "hidden" }}>
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+              <thead>
+                <tr style={{ background: "var(--c-rose-50)", borderBottom: "1.5px solid var(--c-border-soft)" }}>
+                  {["Cliente", "Contacto", "Pago", "Total", "Estado", "Fecha"].map((h, i) => (
+                    <th key={i} style={{ padding: "13px 16px", textAlign: "left", fontWeight: 600, fontSize: 11.5, color: "var(--c-mute)", letterSpacing: ".06em", whiteSpace: "nowrap" }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {orders.map((o) => {
+                  const st = statusColor(o.order_status);
+                  return (
+                    <tr key={o.id} style={{ borderBottom: "1px solid var(--c-border-soft)" }}>
+                      <td style={{ padding: "13px 16px", fontWeight: 500 }}>{o.customer_name}</td>
+                      <td style={{ padding: "13px 16px", color: "var(--c-mute)" }}>
+                        <div>{o.customer_phone}</div>
+                        <div style={{ fontSize: 11 }}>{o.customer_email}</div>
+                      </td>
+                      <td style={{ padding: "13px 16px", color: "var(--c-mute)" }}>{o.payment_method}</td>
+                      <td style={{ padding: "13px 16px", fontWeight: 700 }}>{o.total ? fmtGs(o.total) : "—"}</td>
+                      <td style={{ padding: "13px 16px" }}>
+                        <span style={{ background: st.bg, color: st.color, fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 99 }}>{st.label}</span>
+                      </td>
+                      <td style={{ padding: "13px 16px", color: "var(--c-mute)", fontSize: 12 }}>
+                        {new Date(o.created_at).toLocaleDateString("es-PY")}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 /* ── Sidebar nav config ─────────────────────────────────────── */
 const SECTIONS = [
   { id: "dashboard", label: "Dashboard",  icon: "sparkle" },
   { id: "products",  label: "Productos",  icon: "cart"    },
+  { id: "orders",    label: "Pedidos",    icon: "truck"   },
   { id: "reviews",   label: "Reseñas",    icon: "star"    },
   { id: "articles",  label: "Artículos",  icon: "leaf"    },
   { id: "faqs",      label: "FAQs",       icon: "shield"  },
@@ -375,15 +470,17 @@ const AdminPanel = ({ onLogout }) => {
   const { setRoute } = useStore();
   const [section, setSection] = React.useState("dashboard");
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [productsLoading, setProductsLoading] = React.useState(true);
 
-  const [products, setProducts] = React.useState(() => {
-    const overrides = adminStorage.get("products_override", []);
-    if (!overrides.length) return [...window.PRODUCTS];
-    return window.PRODUCTS.map((p) => {
-      const ov = overrides.find((o) => o.id === p.id);
-      return ov ? { ...p, ...ov } : p;
-    });
-  });
+  const [products, setProducts] = React.useState([...window.PRODUCTS]);
+
+  // Cargar productos frescos desde Supabase al entrar al admin
+  React.useEffect(() => {
+    window.loadDNProducts().then((data) => {
+      setProducts(data);
+      setProductsLoading(false);
+    }).catch(() => setProductsLoading(false));
+  }, []);
 
   const reviews = window.REVIEWS;
 
@@ -463,7 +560,8 @@ const AdminPanel = ({ onLogout }) => {
         </div>
 
         {section === "dashboard" && <Dashboard products={products} reviews={reviews} />}
-        {section === "products"  && <ProductsSection products={products} setProducts={setProducts} />}
+        {section === "products"  && <ProductsSection products={products} setProducts={setProducts} loading={productsLoading} />}
+        {section === "orders"    && <OrdersSection />}
         {section === "reviews"   && <ReviewsSection reviews={reviews} />}
         {section === "articles"  && <ArticlesSection />}
         {section === "faqs"      && <FAQsSection />}

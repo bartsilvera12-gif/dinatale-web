@@ -70,6 +70,18 @@ const Tweaks = () => {
 };
 
 const App = () => {
+  const [ready, setReady] = React.useState(false);
+
+  React.useEffect(() => {
+    window.__sbLoadDNData().finally(() => setReady(true));
+  }, []);
+
+  if (!ready) return (
+    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--c-bg)" }}>
+      <span className="dn-mark"><span className="dn-mark__icon"/><span className="dn-mark__word">DI Natale</span></span>
+    </div>
+  );
+
   return (
     <window.StoreProvider>
       <AppShell />
