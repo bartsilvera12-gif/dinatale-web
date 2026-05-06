@@ -62,7 +62,7 @@ const ProductsView = () => {
           <p style={{ marginTop: 14 }}>No encontramos productos para esos filtros.</p>
         </div>
       ) : (
-        <div style={{ display: "grid", gap: 20, gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}>
+        <div style={{ display: "grid", gap: 20, gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", maxWidth: items.length < 4 ? `${items.length * 260}px` : "none" }}>
           {items.map((p) => <window.ProductCard key={p.id} product={p} onQuick={setQuickView} />)}
         </div>
       )}
