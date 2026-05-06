@@ -579,7 +579,7 @@ const ProductsSection = ({ products, setProducts, loading }) => {
 const CHANNELS = ["WhatsApp", "Instagram", "Facebook", "Google", "Otro"];
 
 const ReviewsSection = ({ reviews: initialReviews }) => {
-  const [reviews, setReviews] = React.useState(initialReviews);
+  const [reviews, setReviews] = React.useState(initialReviews || []);
   const [editing, setEditing] = React.useState(null);
   const [editData, setEditData] = React.useState({});
   const [saving, setSaving] = React.useState(false);
@@ -668,17 +668,17 @@ const ReviewsSection = ({ reviews: initialReviews }) => {
             <h3 style={{ fontFamily: "var(--ff-serif)", fontSize: 24, margin: "0 0 24px" }}>Nueva reseña</h3>
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               {[
-                { label: "Nombre *", key: "name", placeholder: "Ej: Camila R." },
-                { label: "Producto", key: "product", placeholder: "Ej: Sérum Vitamina C" },
-                { label: "Texto *", key: "text", placeholder: "Comentario de la clienta...", textarea: true },
-              ].map(({ label, key, placeholder, textarea }) => (
+                { label: "Nombre *", key: "name", placeholder: "Ej: Camila R.", multi: false },
+                { label: "Producto", key: "product", placeholder: "Ej: Sérum Vitamina C", multi: false },
+                { label: "Texto *", key: "text", placeholder: "Comentario de la clienta...", multi: true },
+              ].map(({ label, key, placeholder, multi }) => (
                 <div key={key}>
                   <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "var(--c-mute)", marginBottom: 5, letterSpacing: ".06em", textTransform: "uppercase" }}>{label}</label>
-                  {textarea
+                  {multi
                     ? <textarea value={newData[key] || ""} onChange={(e) => setNewData((d) => ({ ...d, [key]: e.target.value }))} placeholder={placeholder} rows={3}
                         style={{ ...modalInputStyle, resize: "vertical" }}
                         onFocus={(e) => e.target.style.borderColor = "var(--c-primary)"}
-                        onBlur={(e) => e.target.style.borderColor = "var(--c-border)"} />
+                        onBlur={(e) => e.target.style.borderColor = "var(--c-border)"}></textarea>
                     : <input value={newData[key] || ""} onChange={(e) => setNewData((d) => ({ ...d, [key]: e.target.value }))} placeholder={placeholder}
                         style={modalInputStyle}
                         onFocus={(e) => e.target.style.borderColor = "var(--c-primary)"}
@@ -751,7 +751,7 @@ const ReviewsSection = ({ reviews: initialReviews }) => {
                       <input value={editData.product} onChange={(e) => setEditData((d) => ({ ...d, product: e.target.value }))} placeholder="Producto" style={{ ...inputStyle, flex: "1 1 140px" }} />
                     </div>
                     <textarea value={editData.text} onChange={(e) => setEditData((d) => ({ ...d, text: e.target.value }))} placeholder="Texto de la reseña..." rows={2}
-                      style={{ ...inputStyle, resize: "vertical" }} />
+                      style={{ ...inputStyle, resize: "vertical" }}></textarea>
                     <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
                       <AdmSelect value={editData.channel} onChange={(e) => setEditData((d) => ({ ...d, channel: e.target.value }))} style={{ minWidth: 130 }}>
                         {CHANNELS.map((c) => <option key={c} value={c}>{c}</option>)}
