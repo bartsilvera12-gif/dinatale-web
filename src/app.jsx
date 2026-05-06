@@ -4,16 +4,17 @@ const { StoreProvider, useStore } = window;
 const Views = () => {
   const { route } = useStore();
   switch (route.name) {
-    case "products": return <window.ProductsView />;
+    case "products":   return <window.ProductsView />;
     case "categories": return <window.CategoriesView />;
-    case "product": return <window.ProductDetailView />;
-    case "blog": return <window.BlogView />;
-    case "reviews": return <window.ReviewsView />;
-    case "faq": return <window.FAQView />;
-    case "about": return <window.AboutView />;
-    case "cart": return <window.CartView />;
-    case "checkout": return <window.CheckoutView />;
-    default: return <window.HomeView />;
+    case "product":    return <window.ProductDetailView />;
+    case "blog":       return <window.BlogView />;
+    case "reviews":    return <window.ReviewsView />;
+    case "faq":        return <window.FAQView />;
+    case "about":      return <window.AboutView />;
+    case "cart":       return <window.CartView />;
+    case "checkout":   return <window.CheckoutView />;
+    case "admin":      return <window.AdminView />;
+    default:           return <window.HomeView />;
   }
 };
 
@@ -71,6 +72,21 @@ const Tweaks = () => {
 const App = () => {
   return (
     <window.StoreProvider>
+      <AppShell />
+    </window.StoreProvider>
+  );
+};
+
+const AppShell = () => {
+  const { route } = useStore();
+  const isAdmin = route.name === "admin";
+
+  if (isAdmin) {
+    return <Views />;
+  }
+
+  return (
+    <React.Fragment>
       <window.Header />
       <main style={{ minHeight: "60vh" }}>
         <Views />
@@ -80,7 +96,7 @@ const App = () => {
       <window.Toast />
       <window.QuickView />
       <Tweaks />
-    </window.StoreProvider>
+    </React.Fragment>
   );
 };
 

@@ -11,7 +11,7 @@ const StoreProvider = ({ children }) => {
     try {
       const h = window.location.hash.replace(/^#/, "");
       if (h.startsWith("/product/")) return { name: "product", params: { id: h.split("/")[2] } };
-      const map = { "/products": "products", "/categories": "categories", "/blog": "blog", "/reviews": "reviews", "/faq": "faq", "/about": "about", "/cart": "cart", "/checkout": "checkout" };
+      const map = { "/products": "products", "/categories": "categories", "/blog": "blog", "/reviews": "reviews", "/faq": "faq", "/about": "about", "/cart": "cart", "/checkout": "checkout", "/admin": "admin" };
       if (map[h]) return { name: map[h], params: {} };
     } catch (e) {}
     return { name: "home", params: {} };
