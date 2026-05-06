@@ -41,6 +41,23 @@ const ProductDetailView = () => {
           <div style={{ aspectRatio: "1 / 1", borderRadius: 24, overflow: "hidden", background: "var(--c-rose-50)", marginBottom: 14, position: "relative" }}>
             <img src={product.images[imgIdx] || window.DN_IMG_FALLBACK} alt={product.name} onError={window.imgFallback} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
             {product.tag && <div style={{ position: "absolute", top: 18, left: 18 }}><window.Tag tag={product.tag} /></div>}
+            {product.images.length > 1 && (
+              <React.Fragment>
+                <button onClick={() => setImgIdx((i) => (i - 1 + product.images.length) % product.images.length)}
+                  style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", width: 38, height: 38, borderRadius: "50%", background: "rgba(255,255,255,0.85)", border: "none", cursor: "pointer", display: "grid", placeItems: "center", boxShadow: "0 2px 8px rgba(0,0,0,0.12)", backdropFilter: "blur(4px)" }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--c-ink)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <button onClick={() => setImgIdx((i) => (i + 1) % product.images.length)}
+                  style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", width: 38, height: 38, borderRadius: "50%", background: "rgba(255,255,255,0.85)", border: "none", cursor: "pointer", display: "grid", placeItems: "center", boxShadow: "0 2px 8px rgba(0,0,0,0.12)", backdropFilter: "blur(4px)" }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--c-ink)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+                <div style={{ position: "absolute", bottom: 14, left: "50%", transform: "translateX(-50%)", display: "flex", gap: 6 }}>
+                  {product.images.map((_, i) => (
+                    <button key={i} onClick={() => setImgIdx(i)} style={{ width: i === imgIdx ? 20 : 7, height: 7, borderRadius: 99, border: "none", cursor: "pointer", padding: 0, background: i === imgIdx ? "var(--c-primary)" : "rgba(255,255,255,0.7)", transition: "all .25s ease" }} />
+                  ))}
+                </div>
+              </React.Fragment>
+            )}
           </div>
           {product.images.length > 1 && (
             <div style={{ display: "flex", gap: 10 }}>
