@@ -259,15 +259,6 @@ const HomeView = () => {
       </section>
 
       {/* BLOG TEASER */}
-      <section className="container" style={{ paddingTop: 120 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: 16, marginBottom: 32 }}>
-          <window.SectionTitle eyebrow="Consejos DI NATALE" title="Consultoría <em>estética</em>" sub="Notas pensadas para acompañar tu cuidado, sin promesas exageradas." />
-          <button className="ulink" onClick={() => setRoute("blog")} style={{ background: "none", border: "none", padding: 0, cursor: "pointer", fontSize: 14 }}>Ir al blog →</button>
-        </div>
-        <div style={{ display: "grid", gap: 20, gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
-          {ARTICLES.slice(0, 3).map((a) => <window.BlogCard key={a.id} a={a} />)}
-        </div>
-      </section>
 
       {/* CTA */}
       <section className="container" style={{ paddingTop: 120 }}>
