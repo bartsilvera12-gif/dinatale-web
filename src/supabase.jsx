@@ -188,6 +188,25 @@ const loadDNOrders = async () => {
   }
 };
 
+/* ── Crear reseña (admin) ──────────────────────────────────── */
+const createDNReview = async ({ name, text, rating, product, channel }) => {
+  const [row] = await sbPost("dn_reviews", { name, text, rating: Number(rating), product, channel });
+  return row;
+};
+
+/* ── Actualizar reseña (admin) ─────────────────────────────── */
+const updateDNReview = async (id, { name, text, rating, product, channel }) => {
+  return sbPatch("dn_reviews", `id=eq.${id}`, { name, text, rating: Number(rating), product, channel });
+};
+
+/* ── Eliminar reseña (admin) ───────────────────────────────── */
+const deleteDNReview = async (id) => {
+  const res = await fetch(`${DN_SUPABASE_URL}/rest/v1/dn_reviews?id=eq.${id}`, {
+    method: "DELETE", headers: sbHeaders(true)
+  });
+  if (!res.ok) throw new Error(`DELETE dn_reviews: ${res.status}`);
+};
+
 /* ── Cargar reseñas desde dinatale.reviews ─────────────────── */
 const loadDNReviews = async () => {
   try {
@@ -257,6 +276,7 @@ window.__sbLoadDNData = async () => {
 Object.assign(window, {
   sbGet, sbPatch, sbPost,
   loadDNProducts, loadDNCategories, loadDNReviews, loadDNArticles, loadDNFaqs,
-  createDNProduct, updateDNProduct, deleteDNProduct, updateDNCategory, createDNCategory, deleteDNCategory, saveDNOrder, loadDNOrders,
+  createDNProduct, updateDNProduct, deleteDNProduct, updateDNCategory, createDNCategory, deleteDNCategory,
+  createDNReview, updateDNReview, deleteDNReview, saveDNOrder, loadDNOrders,
   mapProduct
 });

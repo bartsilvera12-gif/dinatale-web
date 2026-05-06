@@ -576,33 +576,227 @@ const ProductsSection = ({ products, setProducts, loading }) => {
 };
 
 /* ── Reseñas ───────────────────────────────────────────────── */
-const ReviewsSection = ({ reviews }) => (
-  <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
-    <div>
-      <h2 style={{ fontFamily: "var(--ff-serif)", fontSize: 28, margin: "0 0 4px" }}>Reseñas</h2>
-      <p style={{ color: "var(--c-mute)", fontSize: 14, margin: 0 }}>{reviews.length} reseñas de clientes.</p>
-    </div>
-    <div style={{ display: "grid", gap: 14 }}>
-      {reviews.map((r) => (
-        <div key={r.id} className="card" style={{ padding: "22px 26px", display: "flex", gap: 16, alignItems: "flex-start" }}>
-          <div style={{ width: 44, height: 44, borderRadius: "50%", background: "var(--grad-brand)", display: "grid", placeItems: "center", flexShrink: 0, color: "white", fontWeight: 700, fontSize: 17 }}>
-            {r.name[0]}
-          </div>
-          <div style={{ flex: 1 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 6, marginBottom: 8 }}>
+const CHANNELS = ["WhatsApp", "Instagram", "Facebook", "Google", "Otro"];
+
+const ReviewsSection = ({ reviews: initialReviews }) => {
+  const [reviews, setReviews] = React.useState(initialReviews);
+  const [editing, setEditing] = React.useState(null);
+  const [editData, setEditData] = React.useState({});
+  const [saving, setSaving] = React.useState(false);
+  const [saveErr, setSaveErr] = React.useState(null);
+  const [confirmDelete, setConfirmDelete] = React.useState(null);
+  const [deleting, setDeleting] = React.useState(false);
+  const [showNew, setShowNew] = React.useState(false);
+  const [newData, setNewData] = React.useState({});
+  const [creating, setCreating] = React.useState(false);
+  const [createErr, setCreateErr] = React.useState(null);
+
+  const startEdit = (r) => { setEditing(r.id); setEditData({ name: r.name, text: r.text, rating: r.rating, product: r.product, channel: r.channel }); setSaveErr(null); };
+  const cancelEdit = () => { setEditing(null); setEditData({}); setSaveErr(null); };
+
+  const saveEdit = async (id) => {
+    setSaving(true); setSaveErr(null);
+    try {
+      await window.updateDNReview(id, editData);
+      const updated = reviews.map((r) => r.id === id ? { ...r, ...editData } : r);
+      setReviews(updated);
+      window.REVIEWS = updated;
+      setEditing(null);
+    } catch(e) {
+      setSaveErr("Error al guardar. Reintentá.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const deleteReview = async (id) => {
+    setDeleting(true);
+    try {
+      await window.deleteDNReview(id);
+      const updated = reviews.filter((r) => r.id !== id);
+      setReviews(updated);
+      window.REVIEWS = updated;
+      setConfirmDelete(null);
+    } catch(e) {
+      alert("Error al eliminar la reseña. Reintentá.");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const openNew = () => { setNewData({ name: "", text: "", rating: 5, product: "", channel: "WhatsApp" }); setCreateErr(null); setShowNew(true); };
+
+  const createReview = async () => {
+    if (!newData.name.trim() || !newData.text.trim()) { setCreateErr("Nombre y texto son obligatorios."); return; }
+    setCreating(true); setCreateErr(null);
+    try {
+      const row = await window.createDNReview(newData);
+      const mapped = { id: row.id, name: row.name, text: row.text, rating: row.rating, product: row.product, channel: row.channel };
+      const updated = [mapped, ...reviews];
+      setReviews(updated);
+      window.REVIEWS = updated;
+      setShowNew(false);
+    } catch(e) {
+      setCreateErr("Error al crear la reseña. Reintentá.");
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  const inputStyle = { width: "100%", boxSizing: "border-box", padding: "9px 12px", borderRadius: 9, border: "1.5px solid var(--c-primary)", fontSize: 13, outline: "none", fontFamily: "inherit" };
+  const modalInputStyle = { width: "100%", boxSizing: "border-box", padding: "10px 14px", borderRadius: 10, border: "1.5px solid var(--c-border)", fontSize: 14, outline: "none", fontFamily: "inherit" };
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
+        <div>
+          <h2 style={{ fontFamily: "var(--ff-serif)", fontSize: 28, margin: "0 0 4px" }}>Reseñas</h2>
+          <p style={{ color: "var(--c-mute)", fontSize: 14, margin: 0 }}>{reviews.length} reseñas de clientes.</p>
+        </div>
+        <button onClick={openNew} className="btn btn--primary btn--sm" style={{ gap: 8 }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Nueva reseña
+        </button>
+      </div>
+
+      {/* Modal nueva reseña */}
+      {showNew && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 300, background: "rgba(31,23,32,0.45)", display: "grid", placeItems: "center", padding: 20 }}
+             onClick={() => !creating && setShowNew(false)}>
+          <div style={{ background: "white", borderRadius: 20, padding: "36px 32px", maxWidth: 500, width: "100%", boxShadow: "0 20px 60px rgba(0,0,0,0.2)", maxHeight: "90vh", overflowY: "auto" }}
+               onClick={(e) => e.stopPropagation()}>
+            <h3 style={{ fontFamily: "var(--ff-serif)", fontSize: 24, margin: "0 0 24px" }}>Nueva reseña</h3>
+            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+              {[
+                { label: "Nombre *", key: "name", placeholder: "Ej: Camila R." },
+                { label: "Producto", key: "product", placeholder: "Ej: Sérum Vitamina C" },
+                { label: "Texto *", key: "text", placeholder: "Comentario de la clienta...", textarea: true },
+              ].map(({ label, key, placeholder, textarea }) => (
+                <div key={key}>
+                  <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "var(--c-mute)", marginBottom: 5, letterSpacing: ".06em", textTransform: "uppercase" }}>{label}</label>
+                  {textarea
+                    ? <textarea value={newData[key] || ""} onChange={(e) => setNewData((d) => ({ ...d, [key]: e.target.value }))} placeholder={placeholder} rows={3}
+                        style={{ ...modalInputStyle, resize: "vertical" }}
+                        onFocus={(e) => e.target.style.borderColor = "var(--c-primary)"}
+                        onBlur={(e) => e.target.style.borderColor = "var(--c-border)"} />
+                    : <input value={newData[key] || ""} onChange={(e) => setNewData((d) => ({ ...d, [key]: e.target.value }))} placeholder={placeholder}
+                        style={modalInputStyle}
+                        onFocus={(e) => e.target.style.borderColor = "var(--c-primary)"}
+                        onBlur={(e) => e.target.style.borderColor = "var(--c-border)"} />
+                  }
+                </div>
+              ))}
               <div>
-                <span style={{ fontWeight: 600, fontSize: 14 }}>{r.name}</span>
-                <span style={{ color: "var(--c-mute)", fontSize: 12, marginLeft: 10 }}>via {r.channel}</span>
+                <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "var(--c-mute)", marginBottom: 5, letterSpacing: ".06em", textTransform: "uppercase" }}>Canal</label>
+                <AdmSelect value={newData.channel || "WhatsApp"} onChange={(e) => setNewData((d) => ({ ...d, channel: e.target.value }))}>
+                  {CHANNELS.map((c) => <option key={c} value={c}>{c}</option>)}
+                </AdmSelect>
               </div>
-              <span style={{ fontSize: 14 }}>{"⭐".repeat(r.rating)}</span>
+              <div>
+                <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "var(--c-mute)", marginBottom: 5, letterSpacing: ".06em", textTransform: "uppercase" }}>Calificación</label>
+                <div style={{ display: "flex", gap: 6 }}>
+                  {[1,2,3,4,5].map((n) => (
+                    <button key={n} type="button" onClick={() => setNewData((d) => ({ ...d, rating: n }))}
+                      style={{ fontSize: 22, background: "none", border: "none", cursor: "pointer", opacity: n <= (newData.rating || 5) ? 1 : 0.25, transition: "opacity .15s" }}>⭐</button>
+                  ))}
+                </div>
+              </div>
+              {createErr && <p style={{ color: "var(--c-danger)", fontSize: 13, margin: 0 }}>{createErr}</p>}
             </div>
-            <p style={{ margin: "0 0 8px", fontSize: 14, lineHeight: 1.65, color: "var(--c-ink-2)" }}>{r.text}</p>
-            <span style={{ fontSize: 12, color: "var(--c-primary)", fontWeight: 600, background: "var(--c-rose-50)", padding: "3px 10px", borderRadius: 99 }}>{r.product}</span>
+            <div style={{ display: "flex", gap: 10, marginTop: 24 }}>
+              <button onClick={() => setShowNew(false)} disabled={creating} className="btn btn--ghost btn--block">Cancelar</button>
+              <button onClick={createReview} disabled={creating} className="btn btn--primary btn--block">
+                {creating ? "Creando..." : "Crear reseña"}
+              </button>
+            </div>
           </div>
         </div>
-      ))}
+      )}
+
+      {/* Modal confirmar eliminar */}
+      {confirmDelete && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 300, background: "rgba(31,23,32,0.45)", display: "grid", placeItems: "center", padding: 20 }}
+             onClick={() => !deleting && setConfirmDelete(null)}>
+          <div style={{ background: "white", borderRadius: 20, padding: "36px 32px", maxWidth: 400, width: "100%", boxShadow: "0 20px 60px rgba(0,0,0,0.2)" }}
+               onClick={(e) => e.stopPropagation()}>
+            <div style={{ fontSize: 36, marginBottom: 12, textAlign: "center" }}>🗑️</div>
+            <h3 style={{ fontFamily: "var(--ff-serif)", fontSize: 22, margin: "0 0 10px", textAlign: "center" }}>¿Eliminar reseña?</h3>
+            <p style={{ color: "var(--c-mute)", fontSize: 14, textAlign: "center", margin: "0 0 24px", lineHeight: 1.5 }}>
+              La reseña de <strong>{confirmDelete.name}</strong> será eliminada permanentemente.
+            </p>
+            <div style={{ display: "flex", gap: 10 }}>
+              <button onClick={() => setConfirmDelete(null)} disabled={deleting} className="btn btn--ghost btn--block">Cancelar</button>
+              <button onClick={() => deleteReview(confirmDelete.id)} disabled={deleting}
+                style={{ flex: 1, padding: "12px 0", borderRadius: 999, background: "var(--c-danger)", color: "white", border: "none", fontWeight: 600, fontSize: 14, cursor: "pointer", fontFamily: "inherit" }}>
+                {deleting ? "Eliminando..." : "Sí, eliminar"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div style={{ display: "grid", gap: 14 }}>
+        {reviews.map((r) => {
+          const isEdit = editing === r.id;
+          return (
+            <div key={r.id} className="card" style={{ padding: "20px 24px", display: "flex", gap: 16, alignItems: "flex-start", background: isEdit ? "var(--c-rose-50)" : "white", transition: "background .3s" }}>
+              <div style={{ width: 44, height: 44, borderRadius: "50%", background: "var(--grad-brand)", display: "grid", placeItems: "center", flexShrink: 0, color: "white", fontWeight: 700, fontSize: 17 }}>
+                {(isEdit ? editData.name : r.name)[0] || "?"}
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                {isEdit ? (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                      <input value={editData.name} onChange={(e) => setEditData((d) => ({ ...d, name: e.target.value }))} placeholder="Nombre" style={{ ...inputStyle, flex: "1 1 140px" }} />
+                      <input value={editData.product} onChange={(e) => setEditData((d) => ({ ...d, product: e.target.value }))} placeholder="Producto" style={{ ...inputStyle, flex: "1 1 140px" }} />
+                    </div>
+                    <textarea value={editData.text} onChange={(e) => setEditData((d) => ({ ...d, text: e.target.value }))} placeholder="Texto de la reseña..." rows={2}
+                      style={{ ...inputStyle, resize: "vertical" }} />
+                    <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+                      <AdmSelect value={editData.channel} onChange={(e) => setEditData((d) => ({ ...d, channel: e.target.value }))} style={{ minWidth: 130 }}>
+                        {CHANNELS.map((c) => <option key={c} value={c}>{c}</option>)}
+                      </AdmSelect>
+                      <div style={{ display: "flex", gap: 2 }}>
+                        {[1,2,3,4,5].map((n) => (
+                          <button key={n} type="button" onClick={() => setEditData((d) => ({ ...d, rating: n }))}
+                            style={{ fontSize: 18, background: "none", border: "none", cursor: "pointer", opacity: n <= editData.rating ? 1 : 0.25, transition: "opacity .15s", padding: 0 }}>⭐</button>
+                        ))}
+                      </div>
+                    </div>
+                    {saveErr && <p style={{ color: "var(--c-danger)", fontSize: 12, margin: 0 }}>{saveErr}</p>}
+                    <div style={{ display: "flex", gap: 8 }}>
+                      <button onClick={() => saveEdit(r.id)} disabled={saving} className="btn btn--primary btn--sm" style={{ padding: "7px 16px" }}>{saving ? "..." : "Guardar"}</button>
+                      <button onClick={cancelEdit} className="btn btn--ghost btn--sm" style={{ padding: "7px 14px" }}>Cancelar</button>
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 6, marginBottom: 8 }}>
+                      <div>
+                        <span style={{ fontWeight: 600, fontSize: 14 }}>{r.name}</span>
+                        <span style={{ color: "var(--c-mute)", fontSize: 12, marginLeft: 10 }}>via {r.channel}</span>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <span style={{ fontSize: 14 }}>{"⭐".repeat(r.rating)}</span>
+                        <button onClick={() => startEdit(r)} className="btn btn--ghost btn--sm" style={{ padding: "5px 12px", fontSize: 12 }}>Editar</button>
+                        <button onClick={() => setConfirmDelete(r)} title="Eliminar reseña"
+                          style={{ width: 30, height: 30, display: "grid", placeItems: "center", background: "#FEE2E2", color: "#991B1B", border: "none", borderRadius: 8, cursor: "pointer", flexShrink: 0 }}>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                    <p style={{ margin: "0 0 8px", fontSize: 14, lineHeight: 1.65, color: "var(--c-ink-2)" }}>{r.text}</p>
+                    <span style={{ fontSize: 12, color: "var(--c-primary)", fontWeight: 600, background: "var(--c-rose-50)", padding: "3px 10px", borderRadius: 99 }}>{r.product}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
-  </div>
 );
 
 /* ── Artículos ─────────────────────────────────────────────── */
