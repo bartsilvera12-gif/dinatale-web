@@ -1,6 +1,5 @@
 {
   "rewrites": [
-    { "source": "/", "destination": "/DI Natale.html" },
-    { "source": "/((?!assets/).*)", "destination": "/DI Natale.html" }
+    { "source": "/((?!assets/).*)", "destination": "/index.html" }
   ]
 }
