@@ -1,6 +1,24 @@
 const HomeView = () => {
   const { setRoute, setQuickView } = useStore();
-  const featured = PRODUCTS.slice(0, 8);
+  const perPage = 4;
+  const [featPage, setFeatPage] = React.useState(0);
+  const [featDir, setFeatDir] = React.useState(1);
+  const featPages = Math.ceil(PRODUCTS.length / perPage);
+
+  React.useEffect(() => {
+    if (featPages <= 1) return;
+    const t = setInterval(() => {
+      setFeatDir(1);
+      setFeatPage((p) => (p + 1) % featPages);
+    }, 4500);
+    return () => clearInterval(t);
+  }, [featPages]);
+
+  const goFeat = (next) => {
+    setFeatDir(next >= featPage ? 1 : -1);
+    setFeatPage(next);
+  };
+  const featSlice = PRODUCTS.slice(featPage * perPage, featPage * perPage + perPage);
 
   return (
     <div className="view-fade">
@@ -121,6 +139,10 @@ const HomeView = () => {
           @keyframes floatA { 0%,100%{ transform: translateY(0) } 50%{ transform: translateY(-10px) } }
           @keyframes floatB { 0%,100%{ transform: translateY(0) } 50%{ transform: translateY(8px) } }
           @keyframes floatC { 0%,100%{ transform: translateY(0) } 50%{ transform: translateY(-6px) } }
+          @keyframes featSlideR { from { opacity:0; transform:translateX(32px); } to { opacity:1; transform:none; } }
+          @keyframes featSlideL { from { opacity:0; transform:translateX(-32px); } to { opacity:1; transform:none; } }
+          @media (max-width: 900px) { .feat-grid { grid-template-columns: repeat(2, minmax(0,1fr)) !important; } }
+          @media (max-width: 540px) { .feat-grid { grid-template-columns: repeat(1, minmax(0,1fr)) !important; } }
         `}</style>
       </section>
 
@@ -140,11 +162,32 @@ const HomeView = () => {
           <window.SectionTitle eyebrow="Lo más elegido" title="Productos <em>destacados</em>" sub="Nuestra selección preferida para esta temporada." />
           <button className="ulink" onClick={() => setRoute("products")} style={{ background: "none", border: "none", padding: 0, cursor: "pointer", fontSize: 14 }}>Ver catálogo completo →</button>
         </div>
-        <div style={{ display: "grid", gap: 20, gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}>
-          {featured.map((p) => (
-            <window.ProductCard key={p.id} product={p} onQuick={setQuickView} />
-          ))}
+
+        <div style={{ overflow: "hidden" }}>
+          <div key={featPage} className="feat-grid" style={{ display: "grid", gap: 20, gridTemplateColumns: "repeat(4, minmax(0, 1fr))", animation: featDir >= 0 ? "featSlideR 0.42s ease" : "featSlideL 0.42s ease" }}>
+            {featSlice.map((p) => (
+              <window.ProductCard key={p.id} product={p} onQuick={setQuickView} />
+            ))}
+          </div>
         </div>
+
+        {featPages > 1 && (
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 14, marginTop: 28 }}>
+            <button onClick={() => goFeat((featPage - 1 + featPages) % featPages)}
+              style={{ width: 38, height: 38, borderRadius: "50%", border: "1.5px solid var(--c-border)", background: "white", cursor: "pointer", display: "grid", placeItems: "center", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", transition: "box-shadow .2s" }}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--c-ink)" strokeWidth="2.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <div style={{ display: "flex", gap: 6 }}>
+              {Array.from({ length: featPages }).map((_, i) => (
+                <button key={i} onClick={() => goFeat(i)} style={{ width: i === featPage ? 22 : 7, height: 7, borderRadius: 99, border: "none", cursor: "pointer", padding: 0, background: i === featPage ? "var(--c-primary)" : "var(--c-border)", transition: "all .3s ease" }} />
+              ))}
+            </div>
+            <button onClick={() => goFeat((featPage + 1) % featPages)}
+              style={{ width: 38, height: 38, borderRadius: "50%", border: "1.5px solid var(--c-border)", background: "white", cursor: "pointer", display: "grid", placeItems: "center", boxShadow: "0 2px 8px rgba(0,0,0,0.06)", transition: "box-shadow .2s" }}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--c-ink)" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+        )}
       </section>
 
       {/* EDITORIAL FEATURE */}
