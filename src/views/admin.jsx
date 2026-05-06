@@ -41,22 +41,29 @@ const AdmSelect = ({ value, onChange, children, style }) => {
       {open && (
         <div style={{
           position: "absolute", top: "calc(100% + 6px)", left: 0, right: 0, zIndex: 999,
-          background: "white", borderRadius: 12, border: "1.5px solid var(--c-border)",
-          boxShadow: "0 8px 32px -8px rgba(200,38,138,0.18), 0 2px 8px rgba(0,0,0,0.06)",
-          overflow: "hidden", animation: "admDropIn 0.15s ease"
+          background: "#1e1b2e", borderRadius: 12,
+          boxShadow: "0 12px 40px rgba(0,0,0,0.35)",
+          overflow: "hidden", animation: "admDropIn 0.15s ease", padding: "4px 0"
         }}>
-          {options.map((opt) => (
-            <div key={opt.value} onClick={() => pick(opt)} style={{
-              padding: "10px 14px", cursor: "pointer", fontSize: 14,
-              background: String(opt.value) === String(value) ? "var(--c-rose-50)" : "white",
-              color: String(opt.value) === String(value) ? "var(--c-primary-deep)" : "var(--c-ink)",
-              fontWeight: String(opt.value) === String(value) ? 600 : 400,
-              transition: "background .12s"
-            }}
-            onMouseEnter={(e) => { if (String(opt.value) !== String(value)) e.currentTarget.style.background = "var(--c-rose-50)"; }}
-            onMouseLeave={(e) => { if (String(opt.value) !== String(value)) e.currentTarget.style.background = "white"; }}
-            >{opt.label}</div>
-          ))}
+          {options.map((opt) => {
+            const isSelected = String(opt.value) === String(value);
+            return (
+              <div key={opt.value} onClick={() => pick(opt)} style={{
+                padding: "10px 16px", cursor: "pointer", fontSize: 14,
+                color: isSelected ? "white" : "rgba(255,255,255,0.65)",
+                display: "flex", alignItems: "center", gap: 10,
+                transition: "background .12s, color .12s"
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.07)"; e.currentTarget.style.color = "white"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = isSelected ? "white" : "rgba(255,255,255,0.65)"; }}
+              >
+                <span style={{ width: 16, flexShrink: 0, color: "var(--c-primary)", fontWeight: 700, fontSize: 13 }}>
+                  {isSelected ? "✓" : ""}
+                </span>
+                {opt.label}
+              </div>
+            );
+          })}
         </div>
       )}
       <style>{`@keyframes admDropIn { from { opacity:0; transform:translateY(-6px) } to { opacity:1; transform:none } }`}</style>
