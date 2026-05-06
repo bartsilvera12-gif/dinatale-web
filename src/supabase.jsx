@@ -262,6 +262,17 @@ const loadDNFaqs = async () => {
   }
 };
 
+/* ── Verificar credenciales de admin desde Supabase ───────── */
+const checkDNAdminCreds = async (username, password) => {
+  const res = await fetch(
+    `${DN_SUPABASE_URL}/rest/v1/dn_admin_users?username=eq.${encodeURIComponent(username)}&password=eq.${encodeURIComponent(password)}&select=username`,
+    { headers: sbHeaders(true) }
+  );
+  if (!res.ok) throw new Error(`GET dn_admin_users: ${res.status}`);
+  const rows = await res.json();
+  return rows.length > 0;
+};
+
 /* ── Init: carga todos los datos al arrancar ───────────────── */
 window.__sbLoadDNData = async () => {
   await Promise.all([
@@ -277,6 +288,6 @@ Object.assign(window, {
   sbGet, sbPatch, sbPost,
   loadDNProducts, loadDNCategories, loadDNReviews, loadDNArticles, loadDNFaqs,
   createDNProduct, updateDNProduct, deleteDNProduct, updateDNCategory, createDNCategory, deleteDNCategory,
-  createDNReview, updateDNReview, deleteDNReview, saveDNOrder, loadDNOrders,
+  checkDNAdminCreds, createDNReview, updateDNReview, deleteDNReview, saveDNOrder, loadDNOrders,
   mapProduct
 });

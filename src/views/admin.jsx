@@ -1,8 +1,5 @@
 /* ─── Panel de Administración DI NATALE ─── */
 
-const ADMIN_USER = "admin";
-const ADMIN_PASS = "dinatale2026";
-
 /* ── Select elegante (custom) ──────────────────────────────── */
 const AdmSelect = ({ value, onChange, children, style }) => {
   const [open, setOpen] = React.useState(false);
@@ -120,14 +117,24 @@ const AdminLogin = ({ onAuth }) => {
   const [pass, setPass] = React.useState("");
   const [err, setErr] = React.useState(false);
   const [shake, setShake] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
-    if (user === ADMIN_USER && pass === ADMIN_PASS) {
-      onAuth();
-    } else {
+    setLoading(true);
+    try {
+      const ok = await window.checkDNAdminCreds(user, pass);
+      if (ok) {
+        onAuth();
+      } else {
+        setErr(true); setShake(true);
+        setTimeout(() => { setErr(false); setShake(false); }, 1800);
+      }
+    } catch(e) {
       setErr(true); setShake(true);
       setTimeout(() => { setErr(false); setShake(false); }, 1800);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -171,7 +178,7 @@ const AdminLogin = ({ onAuth }) => {
             />
           </div>
           {err && <p style={{ color: "var(--c-danger)", fontSize: 13, margin: 0 }}>Usuario o contraseña incorrectos.</p>}
-          <button type="submit" className="btn btn--primary btn--block btn--lg" style={{ marginTop: 4 }}>Ingresar</button>
+          <button type="submit" disabled={loading} className="btn btn--primary btn--block btn--lg" style={{ marginTop: 4 }}>{loading ? "Verificando..." : "Ingresar"}</button>
         </form>
       </div>
       <style>{`@keyframes adm-shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-9px)} 60%{transform:translateX(9px)} 80%{transform:translateX(-4px)} }`}</style>
