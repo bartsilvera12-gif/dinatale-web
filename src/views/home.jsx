@@ -3,25 +3,29 @@ const HomeView = () => {
   const perPage = 4;
   const [featPage, setFeatPage] = React.useState(0);
   const [featDir, setFeatDir] = React.useState(1);
-  const [featPaused, setFeatPaused] = React.useState(false);
+  const [featHovered, setFeatHovered] = React.useState(false);
+  const [featClickPaused, setFeatClickPaused] = React.useState(false);
+  const featResumeTimer = React.useRef(null);
   const featProds = PRODUCTS.filter((p) => p.is_featured).length > 0
     ? PRODUCTS.filter((p) => p.is_featured)
     : PRODUCTS;
   const featPages = Math.ceil(featProds.length / perPage);
 
   React.useEffect(() => {
-    if (featPages <= 1 || featPaused) return;
+    if (featPages <= 1 || featHovered || featClickPaused) return;
     const t = setInterval(() => {
       setFeatDir(1);
       setFeatPage((p) => (p + 1) % featPages);
     }, 4500);
     return () => clearInterval(t);
-  }, [featPages, featPaused]);
+  }, [featPages, featHovered, featClickPaused]);
 
   const goFeat = (next) => {
-    setFeatPaused(true);
     setFeatDir(next >= featPage ? 1 : -1);
     setFeatPage(next);
+    setFeatClickPaused(true);
+    if (featResumeTimer.current) clearTimeout(featResumeTimer.current);
+    featResumeTimer.current = setTimeout(() => setFeatClickPaused(false), 30000);
   };
   const featSlice = featProds.slice(featPage * perPage, featPage * perPage + perPage);
 
@@ -172,8 +176,8 @@ const HomeView = () => {
           {featPages > 1 && (
             <button onClick={() => goFeat((featPage - 1 + featPages) % featPages)}
               style={{ position: "absolute", left: -22, top: "50%", transform: "translateY(-50%)", zIndex: 2, width: 40, height: 40, borderRadius: "50%", border: "none", background: "var(--c-primary)", color: "white", cursor: "pointer", display: "grid", placeItems: "center", boxShadow: "0 4px 14px rgba(232,77,163,0.35)", transition: "transform .2s, box-shadow .2s" }}
-              onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-50%) scale(1.1)"; e.currentTarget.style.boxShadow = "0 6px 20px rgba(232,77,163,0.5)"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(-50%) scale(1)"; e.currentTarget.style.boxShadow = "0 4px 14px rgba(232,77,163,0.35)"; }}>
+              onMouseEnter={(e) => { setFeatHovered(true); e.currentTarget.style.transform = "translateY(-50%) scale(1.1)"; e.currentTarget.style.boxShadow = "0 6px 20px rgba(232,77,163,0.5)"; }}
+              onMouseLeave={(e) => { setFeatHovered(false); e.currentTarget.style.transform = "translateY(-50%) scale(1)"; e.currentTarget.style.boxShadow = "0 4px 14px rgba(232,77,163,0.35)"; }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>
             </button>
           )}
@@ -189,8 +193,8 @@ const HomeView = () => {
           {featPages > 1 && (
             <button onClick={() => goFeat((featPage + 1) % featPages)}
               style={{ position: "absolute", right: -22, top: "50%", transform: "translateY(-50%)", zIndex: 2, width: 40, height: 40, borderRadius: "50%", border: "none", background: "var(--c-primary)", color: "white", cursor: "pointer", display: "grid", placeItems: "center", boxShadow: "0 4px 14px rgba(232,77,163,0.35)", transition: "transform .2s, box-shadow .2s" }}
-              onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-50%) scale(1.1)"; e.currentTarget.style.boxShadow = "0 6px 20px rgba(232,77,163,0.5)"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(-50%) scale(1)"; e.currentTarget.style.boxShadow = "0 4px 14px rgba(232,77,163,0.35)"; }}>
+              onMouseEnter={(e) => { setFeatHovered(true); e.currentTarget.style.transform = "translateY(-50%) scale(1.1)"; e.currentTarget.style.boxShadow = "0 6px 20px rgba(232,77,163,0.5)"; }}
+              onMouseLeave={(e) => { setFeatHovered(false); e.currentTarget.style.transform = "translateY(-50%) scale(1)"; e.currentTarget.style.boxShadow = "0 4px 14px rgba(232,77,163,0.35)"; }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><polyline points="9 18 15 12 9 6"/></svg>
             </button>
           )}
