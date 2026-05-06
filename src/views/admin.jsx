@@ -3,25 +3,66 @@
 const ADMIN_USER = "admin";
 const ADMIN_PASS = "dinatale2026";
 
-/* ── Select elegante ───────────────────────────────────────── */
-const AdmSelect = ({ value, onChange, children, style }) => (
-  <div style={{ position: "relative", ...style }}>
-    <select value={value} onChange={onChange} style={{
-      width: "100%", boxSizing: "border-box", padding: "10px 36px 10px 14px",
-      borderRadius: 10, border: "1.5px solid var(--c-border)", fontSize: 14,
-      fontFamily: "inherit", outline: "none", background: "white",
-      appearance: "none", WebkitAppearance: "none", cursor: "pointer",
-      color: "var(--c-ink)", transition: "border-color .2s"
-    }}
-    onFocus={(e) => e.target.style.borderColor = "var(--c-primary)"}
-    onBlur={(e) => e.target.style.borderColor = "var(--c-border)"}
-    >{children}</select>
-    <svg style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }}
-      width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--c-mute)" strokeWidth="2.5" strokeLinecap="round">
-      <polyline points="6 9 12 15 18 9"/>
-    </svg>
-  </div>
-);
+/* ── Select elegante (custom) ──────────────────────────────── */
+const AdmSelect = ({ value, onChange, children, style }) => {
+  const [open, setOpen] = React.useState(false);
+  const ref = React.useRef(null);
+
+  const options = React.Children.map(children, (c) => ({ value: c.props.value, label: c.props.children }));
+  const selected = options.find((o) => String(o.value) === String(value)) || options[0];
+
+  React.useEffect(() => {
+    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const pick = (opt) => {
+    onChange({ target: { value: opt.value } });
+    setOpen(false);
+  };
+
+  return (
+    <div ref={ref} style={{ position: "relative", userSelect: "none", ...style }}>
+      <button type="button" onClick={() => setOpen((v) => !v)} style={{
+        width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between",
+        padding: "10px 14px", borderRadius: 10, cursor: "pointer", fontFamily: "inherit",
+        fontSize: 14, color: "var(--c-ink)", background: "white", textAlign: "left",
+        border: open ? "1.5px solid var(--c-primary)" : "1.5px solid var(--c-border)",
+        boxShadow: open ? "0 0 0 3px rgba(232,77,163,0.10)" : "none",
+        transition: "border-color .2s, box-shadow .2s"
+      }}>
+        <span>{selected?.label}</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--c-mute)" strokeWidth="2.5" strokeLinecap="round"
+          style={{ transform: open ? "rotate(180deg)" : "none", transition: "transform .2s", flexShrink: 0 }}>
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </button>
+      {open && (
+        <div style={{
+          position: "absolute", top: "calc(100% + 6px)", left: 0, right: 0, zIndex: 999,
+          background: "white", borderRadius: 12, border: "1.5px solid var(--c-border)",
+          boxShadow: "0 8px 32px -8px rgba(200,38,138,0.18), 0 2px 8px rgba(0,0,0,0.06)",
+          overflow: "hidden", animation: "admDropIn 0.15s ease"
+        }}>
+          {options.map((opt) => (
+            <div key={opt.value} onClick={() => pick(opt)} style={{
+              padding: "10px 14px", cursor: "pointer", fontSize: 14,
+              background: String(opt.value) === String(value) ? "var(--c-rose-50)" : "white",
+              color: String(opt.value) === String(value) ? "var(--c-primary-deep)" : "var(--c-ink)",
+              fontWeight: String(opt.value) === String(value) ? 600 : 400,
+              transition: "background .12s"
+            }}
+            onMouseEnter={(e) => { if (String(opt.value) !== String(value)) e.currentTarget.style.background = "var(--c-rose-50)"; }}
+            onMouseLeave={(e) => { if (String(opt.value) !== String(value)) e.currentTarget.style.background = "white"; }}
+            >{opt.label}</div>
+          ))}
+        </div>
+      )}
+      <style>{`@keyframes admDropIn { from { opacity:0; transform:translateY(-6px) } to { opacity:1; transform:none } }`}</style>
+    </div>
+  );
+};
 
 /* ── Gestor de imágenes ────────────────────────────────────── */
 const ImageManager = ({ images, onChange }) => {
