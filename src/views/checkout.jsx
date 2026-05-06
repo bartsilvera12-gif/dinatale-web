@@ -83,17 +83,17 @@ const CheckoutView = () => {
             <div style={{ display: "grid", gap: 14, gridTemplateColumns: "1fr 1fr" }}>
               <div style={{ gridColumn: "1 / -1" }}>
                 <label className="label">Nombre completo</label>
-                <input className="input" value={form.name} onChange={(e) => upd("name", e.target.value)} placeholder="Camila Pérez" />
+                <input className="input" value={form.name} onChange={(e) => upd("name", e.target.value)} placeholder="Ej: Camila Pérez" />
                 {errors.name && <span style={errStyle}>{errors.name}</span>}
               </div>
               <div>
                 <label className="label">Teléfono</label>
-                <input className="input" value={form.phone} onChange={(e) => upd("phone", e.target.value)} placeholder="0981 234 567" />
+                <input className="input" value={form.phone} onChange={(e) => upd("phone", e.target.value)} placeholder="Ej: 0981 234 567" />
                 {errors.phone && <span style={errStyle}>{errors.phone}</span>}
               </div>
               <div>
                 <label className="label">Email</label>
-                <input className="input" type="email" value={form.email} onChange={(e) => upd("email", e.target.value)} placeholder="tu@email.com" />
+                <input className="input" type="email" value={form.email} onChange={(e) => upd("email", e.target.value)} placeholder="Ej: camila@email.com" />
                 {errors.email && <span style={errStyle}>{errors.email}</span>}
               </div>
             </div>

@@ -783,7 +783,7 @@ const ReviewsSection = ({ reviews: initialReviews }) => {
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               {[
                 { label: "Nombre *", key: "name", placeholder: "Ej: Camila R." },
-                { label: "Texto *", key: "text", placeholder: "Comentario de la clienta...", multi: true },
+                { label: "Texto *", key: "text", placeholder: "Comentario del cliente...", multi: true },
               ].map(({ label, key, placeholder, multi }) => (
                 <div key={key}>
                   <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "var(--c-mute)", marginBottom: 5, letterSpacing: ".06em", textTransform: "uppercase" }}>{label}</label>
