@@ -41,26 +41,29 @@ const AdmSelect = ({ value, onChange, children, style }) => {
       {open && (
         <div style={{
           position: "absolute", top: "calc(100% + 6px)", left: 0, right: 0, zIndex: 999,
-          background: "#1e1b2e", borderRadius: 12,
-          boxShadow: "0 12px 40px rgba(0,0,0,0.35)",
-          overflow: "hidden", animation: "admDropIn 0.15s ease", padding: "4px 0"
+          background: "var(--c-ink)", borderRadius: 14, padding: "6px",
+          boxShadow: "0 12px 40px -8px rgba(31,23,32,0.4), 0 2px 8px rgba(0,0,0,0.15)",
+          animation: "admDropIn 0.15s ease"
         }}>
           {options.map((opt) => {
             const isSelected = String(opt.value) === String(value);
             return (
               <div key={opt.value} onClick={() => pick(opt)} style={{
-                padding: "10px 16px", cursor: "pointer", fontSize: 14,
-                color: isSelected ? "white" : "rgba(255,255,255,0.65)",
-                display: "flex", alignItems: "center", gap: 10,
-                transition: "background .12s, color .12s"
+                padding: "10px 14px", cursor: "pointer", fontSize: 14, borderRadius: 9,
+                display: "flex", alignItems: "center", justifyContent: "space-between",
+                color: isSelected ? "var(--c-primary)" : "rgba(255,255,255,0.82)",
+                fontWeight: isSelected ? 600 : 400,
+                transition: "background .12s"
               }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.07)"; e.currentTarget.style.color = "white"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = isSelected ? "white" : "rgba(255,255,255,0.65)"; }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.08)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
               >
-                <span style={{ width: 16, flexShrink: 0, color: "var(--c-primary)", fontWeight: 700, fontSize: 13 }}>
-                  {isSelected ? "✓" : ""}
-                </span>
-                {opt.label}
+                <span>{opt.label}</span>
+                {isSelected && (
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--c-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                )}
               </div>
             );
           })}
