@@ -1,7 +1,7 @@
 /* Mock catalog: products, categories, reviews, articles, FAQ */
 const fmtGs = (n) => "Gs. " + n.toLocaleString("es-PY");
 
-const DN_IMG_FALLBACK = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect width='400' height='400' fill='%23FFF1F8'/%3E%3Ctext x='200' y='230' font-family='Georgia%2Cserif' font-size='72' fill='%23F5D5E8' text-anchor='middle'%3EDN%3C/text%3E%3C/svg%3E";
+const DN_IMG_FALLBACK = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%23FFF1F8'/%3E%3Crect x='120' y='130' width='160' height='130' rx='14' fill='none' stroke='%23F5D5E8' stroke-width='10'/%3E%3Ccircle cx='162' cy='168' r='18' fill='%23F5D5E8'/%3E%3Cpolyline points='120,222 168,178 208,210 248,165 280,260' fill='%23FFF1F8' stroke='%23F5D5E8' stroke-width='10' stroke-linejoin='round'/%3E%3C/svg%3E";
 const imgFallback = (e) => { e.target.onerror = null; e.target.src = DN_IMG_FALLBACK; };
 window.DN_IMG_FALLBACK = DN_IMG_FALLBACK;
 window.imgFallback = imgFallback;

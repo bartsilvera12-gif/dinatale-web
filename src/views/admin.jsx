@@ -178,7 +178,7 @@ const ProductsSection = ({ products, setProducts, loading }) => {
     return matchQ && matchCat;
   });
 
-  const startEdit = (p) => { setEditing(p.id); setEditData({ price: p.price, stock: p.stock, tag: p.tag ?? "", oldPrice: p.oldPrice ?? "" }); };
+  const startEdit = (p) => { setEditing(p.id); setEditData({ price: p.price, stock: p.stock, tag: p.tag ?? "", oldPrice: p.oldPrice ?? "", imageUrl: p.images[0] ?? "" }); };
   const cancelEdit = () => { setEditing(null); setEditData({}); setSaveErr(null); };
 
   const deleteProduct = async (id) => {
@@ -199,14 +199,16 @@ const ProductsSection = ({ products, setProducts, loading }) => {
   const saveEdit = async (id) => {
     setSaving(true); setSaveErr(null);
     try {
+      const newImages = editData.imageUrl.trim() ? [editData.imageUrl.trim()] : products.find(p => p.id === id).images;
       await window.updateDNProduct(id, {
         price:    Number(editData.price)    || products.find(p => p.id === id).price,
         stock:    Math.max(0, Number(editData.stock) || 0),
         tag:      editData.tag || null,
-        oldPrice: editData.oldPrice ? Number(editData.oldPrice) : null
+        oldPrice: editData.oldPrice ? Number(editData.oldPrice) : null,
+        images:   newImages
       });
       const updated = products.map((p) => p.id === id
-        ? { ...p, price: Number(editData.price) || p.price, stock: Math.max(0, Number(editData.stock) || 0), tag: editData.tag || null, oldPrice: editData.oldPrice ? Number(editData.oldPrice) : null }
+        ? { ...p, price: Number(editData.price) || p.price, stock: Math.max(0, Number(editData.stock) || 0), tag: editData.tag || null, oldPrice: editData.oldPrice ? Number(editData.oldPrice) : null, images: newImages }
         : p
       );
       setProducts(updated);
@@ -280,12 +282,23 @@ const ProductsSection = ({ products, setProducts, loading }) => {
                 const isSaved = saved === p.id;
                 return (
                   <tr key={p.id} style={{ borderBottom: "1px solid var(--c-border-soft)", background: isEdit ? "var(--c-rose-50)" : isSaved ? "#F0FDF4" : "white", transition: "background .35s" }}>
-                    <td style={{ padding: "13px 16px" }}>
+                    <td style={{ padding: "10px 12px" }}>
                       <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
                         <div style={{ width: 38, height: 38, borderRadius: 9, overflow: "hidden", background: "var(--c-rose-50)", flexShrink: 0 }}>
-                          <img src={p.images[0] || window.DN_IMG_FALLBACK} alt="" onError={window.imgFallback} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                          <img src={(isEdit ? editData.imageUrl : null) || p.images[0] || window.DN_IMG_FALLBACK} alt="" onError={window.imgFallback} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                         </div>
-                        <span style={{ fontWeight: 500, maxWidth: 170, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", display: "block" }}>{p.name}</span>
+                        <div style={{ minWidth: 0 }}>
+                          <span style={{ fontWeight: 500, maxWidth: 150, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", display: "block", fontSize: 13 }}>{p.name}</span>
+                          {isEdit && (
+                            <input
+                              type="url"
+                              value={editData.imageUrl}
+                              onChange={(e) => setEditData((d) => ({ ...d, imageUrl: e.target.value }))}
+                              placeholder="URL de imagen..."
+                              style={{ marginTop: 4, width: 180, padding: "4px 8px", border: "1.5px solid var(--c-border)", borderRadius: 7, fontSize: 11, outline: "none", fontFamily: "inherit", color: "var(--c-mute)" }}
+                            />
+                          )}
+                        </div>
                       </div>
                     </td>
                     <td style={{ padding: "13px 16px", color: "var(--c-mute)", whiteSpace: "nowrap" }}>

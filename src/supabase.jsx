@@ -92,14 +92,16 @@ const deleteDNProduct = async (id) => {
 };
 
 /* ── Actualizar producto en Supabase (admin) ───────────────── */
-const updateDNProduct = async (id, { price, stock, tag, oldPrice }) => {
-  return sbPatch("dn_products", `id=eq.${id}`, {
+const updateDNProduct = async (id, { price, stock, tag, oldPrice, images }) => {
+  const body = {
     price,
     stock,
     tag:       tag || null,
     old_price: oldPrice || null,
     updated_at: new Date().toISOString()
-  });
+  };
+  if (images !== undefined) body.images = images;
+  return sbPatch("dn_products", `id=eq.${id}`, body);
 };
 
 /* ── Guardar pedido desde el checkout ──────────────────────── */
