@@ -98,18 +98,8 @@ const HomeView = () => {
         `}</style>
       </section>
 
-      {/* CATEGORIES */}
-      <section className="container" style={{ paddingTop: 80 }}>
-        <window.SectionTitle eyebrow="Explorá por categoría" title="Categorías de <em>cuidado</em>" sub="Una selección curada para acompañar cada momento de tu rutina." center />
-        <div style={{ display: "grid", gap: 20, gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))" }}>
-          {CATEGORIES.slice(0, 6).map((c) => (
-            <window.CategoryCard key={c.id} cat={c} onClick={() => setRoute("products", { cat: c.id })} />
-          ))}
-        </div>
-      </section>
-
       {/* FEATURED PRODUCTS */}
-      <section className="container" style={{ paddingTop: 100 }}>
+      <section className="container" style={{ paddingTop: 80 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: 16, marginBottom: 32 }}>
           <window.SectionTitle eyebrow="Lo más elegido" title="Productos <em>destacados</em>" sub="Nuestra selección preferida para esta temporada." />
           <button className="ulink" onClick={() => setRoute("products")} style={{ background: "none", border: "none", padding: 0, cursor: "pointer", fontSize: 14 }}>Ver catálogo completo →</button>
@@ -150,6 +140,16 @@ const HomeView = () => {
             ))}
           </div>
         )}
+      </section>
+
+      {/* CATEGORIES */}
+      <section className="container" style={{ paddingTop: 100 }}>
+        <window.SectionTitle eyebrow="Explorá por categoría" title="Categorías de <em>cuidado</em>" sub="Una selección curada para acompañar cada momento de tu rutina." center />
+        <div style={{ display: "grid", gap: 20, gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))" }}>
+          {CATEGORIES.slice(0, 6).map((c) => (
+            <window.CategoryCard key={c.id} cat={c} onClick={() => setRoute("products", { cat: c.id })} />
+          ))}
+        </div>
       </section>
 
       {/* EDITORIAL FEATURE */}
