@@ -40,13 +40,13 @@ const HomeView = () => {
   return (
     <div className="view-fade">
       {/* HERO */}
-      <section style={{ position: "relative", overflow: "hidden", paddingBottom: 80 }}>
+      <section style={{ position: "relative", overflow: "hidden", paddingBottom: 0 }}>
         <div style={{ position: "absolute", inset: 0, background: "var(--grad-hero)", zIndex: -1 }} />
         <window.FloralAccent style={{ top: 60, left: -40, transform: "rotate(-25deg)" }} size={220} color="#E84DA3" />
         <window.FloralAccent style={{ top: 120, right: 8, transform: "rotate(15deg)" }} size={180} color="#C7A4F4" />
         <window.FloralAccent style={{ bottom: 40, left: "30%" }} size={140} color="#E84DA3" />
 
-        <div className="container dn-hero" style={{ paddingTop: 20, paddingBottom: 40, display: "grid", gap: 60, alignItems: "center", gridTemplateColumns: "minmax(0, 1.05fr) minmax(0, 1fr)" }}>
+        <div className="container dn-hero" style={{ paddingTop: 20, paddingBottom: 48, display: "grid", gap: 60, alignItems: "center", gridTemplateColumns: "minmax(0, 1.05fr) minmax(0, 1fr)" }}>
           <div>
             <div className="eyebrow" style={{ marginBottom: 22 }}>Curado en Asunción · Asesoría profesional</div>
             <h1 className="h-display" style={{ fontSize: "clamp(40px, 6.6vw, 78px)", fontWeight: 400, margin: "0 0 20px" }}>
