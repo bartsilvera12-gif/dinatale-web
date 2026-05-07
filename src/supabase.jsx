@@ -281,25 +281,6 @@ const deleteDNFaq = async (id) => {
   if (!res.ok) throw new Error(`DELETE dn_faqs: ${res.status}`);
 };
 
-/* ── Subir imagen vía ImgBB (browser-friendly, sin CORS) ────── */
-const IMGBB_KEY = "TU_API_KEY_AQUI"; // → obtené tu key gratis en api.imgbb.com
-
-const uploadDNImage = async (file) => {
-  const base64 = await new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload  = () => resolve(reader.result.split(",")[1]);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-  const form = new FormData();
-  form.append("key", IMGBB_KEY);
-  form.append("image", base64);
-  const res = await fetch("https://api.imgbb.com/1/upload", { method: "POST", body: form });
-  if (!res.ok) throw new Error(`Upload failed: ${res.status}`);
-  const data = await res.json();
-  return data.data.url;
-};
-
 /* ── Verificar credenciales de admin desde Supabase ───────── */
 const checkDNAdminCreds = async (username, password) => {
   const res = await fetch(
@@ -328,6 +309,5 @@ Object.assign(window, {
   createDNProduct, updateDNProduct, deleteDNProduct, updateDNCategory, createDNCategory, deleteDNCategory,
   checkDNAdminCreds, createDNReview, updateDNReview, deleteDNReview, saveDNOrder, loadDNOrders,
   createDNFaq, updateDNFaq, deleteDNFaq,
-  uploadDNImage,
   mapProduct
 });
