@@ -6,9 +6,17 @@ const HomeView = () => {
   const [featHovered, setFeatHovered] = React.useState(false);
   const [featClickPaused, setFeatClickPaused] = React.useState(false);
   const featResumeTimer = React.useRef(null);
-  const featProds = PRODUCTS.filter((p) => p.is_featured).length > 0
-    ? PRODUCTS.filter((p) => p.is_featured)
-    : PRODUCTS;
+  const featProds = React.useMemo(() => {
+    const featured = PRODUCTS.filter((p) => p.is_featured);
+    const base = featured.length > 0 ? featured : PRODUCTS;
+    try {
+      const order = JSON.parse(localStorage.getItem("dn_featured_order") || "null");
+      if (!order || !order.length) return base;
+      const ordered = order.map((id) => base.find((p) => p.id === id)).filter(Boolean);
+      const rest = base.filter((p) => !order.includes(p.id));
+      return [...ordered, ...rest];
+    } catch { return base; }
+  }, []);
   const featPages = Math.ceil(featProds.length / perPage);
 
   React.useEffect(() => {

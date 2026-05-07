@@ -415,6 +415,9 @@ const ProductsSection = ({ products, setProducts, loading }) => {
   const [saving, setSaving] = React.useState(false);
   const [saveErr, setSaveErr] = React.useState(null);
   const [confirmDelete, setConfirmDelete] = React.useState(null);
+  const [featOrder, setFeatOrder] = React.useState(() => {
+    try { return JSON.parse(localStorage.getItem("dn_featured_order") || "null") || null; } catch { return null; }
+  });
   const [deleting, setDeleting] = React.useState(false);
   const [showNew, setShowNew] = React.useState(false);
   const [newData, setNewData] = React.useState({});
@@ -503,6 +506,25 @@ const ProductsSection = ({ products, setProducts, loading }) => {
     }
   };
 
+  /* Orden de destacados */
+  const featuredProducts = React.useMemo(() => {
+    const feat = products.filter(p => p.is_featured);
+    if (!featOrder || !featOrder.length) return feat;
+    const ordered = featOrder.map(id => feat.find(p => p.id === id)).filter(Boolean);
+    const rest = feat.filter(p => !featOrder.includes(p.id));
+    return [...ordered, ...rest];
+  }, [products, featOrder]);
+
+  const moveFeat = (idx, dir) => {
+    const arr = [...featuredProducts];
+    const swapIdx = idx + dir;
+    if (swapIdx < 0 || swapIdx >= arr.length) return;
+    [arr[idx], arr[swapIdx]] = [arr[swapIdx], arr[idx]];
+    const newOrder = arr.map(p => p.id);
+    setFeatOrder(newOrder);
+    localStorage.setItem("dn_featured_order", JSON.stringify(newOrder));
+  };
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
@@ -515,6 +537,37 @@ const ProductsSection = ({ products, setProducts, loading }) => {
           Nuevo producto
         </button>
       </div>
+
+      {/* Panel orden de destacados */}
+      {featuredProducts.length > 0 && (
+        <div className="card" style={{ padding: "20px 24px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--c-primary)" strokeWidth="2.5" strokeLinecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <span style={{ fontWeight: 600, fontSize: 14, color: "var(--c-ink)" }}>Orden de productos destacados</span>
+            <span style={{ fontSize: 12, color: "var(--c-mute)", marginLeft: 4 }}>— así aparecen en la página de inicio</span>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            {featuredProducts.map((p, idx) => (
+              <div key={p.id} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 12px", borderRadius: 10, background: "var(--c-rose-50)", border: "1px solid var(--c-border-soft)" }}>
+                <span style={{ fontSize: 12, fontWeight: 700, color: "var(--c-primary)", minWidth: 20, textAlign: "center" }}>{idx + 1}</span>
+                <img src={p.images[0] || window.DN_IMG_FALLBACK} onError={window.imgFallback} alt=""
+                  style={{ width: 36, height: 36, borderRadius: 8, objectFit: "cover", border: "1px solid var(--c-border)", flexShrink: 0 }} />
+                <span style={{ flex: 1, fontSize: 13, fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{p.name}</span>
+                <div style={{ display: "flex", gap: 4, flexShrink: 0 }}>
+                  <button onClick={() => moveFeat(idx, -1)} disabled={idx === 0}
+                    style={{ width: 28, height: 28, borderRadius: 7, border: "1px solid var(--c-border)", background: idx === 0 ? "transparent" : "white", cursor: idx === 0 ? "default" : "pointer", display: "grid", placeItems: "center", opacity: idx === 0 ? 0.3 : 1, transition: "opacity .2s" }}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--c-ink-2)" strokeWidth="2.5" strokeLinecap="round"><polyline points="18 15 12 9 6 15"/></svg>
+                  </button>
+                  <button onClick={() => moveFeat(idx, 1)} disabled={idx === featuredProducts.length - 1}
+                    style={{ width: 28, height: 28, borderRadius: 7, border: "1px solid var(--c-border)", background: idx === featuredProducts.length - 1 ? "transparent" : "white", cursor: idx === featuredProducts.length - 1 ? "default" : "pointer", display: "grid", placeItems: "center", opacity: idx === featuredProducts.length - 1 ? 0.3 : 1, transition: "opacity .2s" }}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--c-ink-2)" strokeWidth="2.5" strokeLinecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
         <div style={{ position: "relative", flex: "1 1 200px" }}>
