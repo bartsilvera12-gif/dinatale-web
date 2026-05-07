@@ -41,9 +41,12 @@ const HomeView = () => {
         <div className="container dn-hero" style={{ paddingTop: 20, paddingBottom: 40, display: "grid", gap: 60, alignItems: "center", gridTemplateColumns: "minmax(0, 1.05fr) minmax(0, 1fr)" }}>
           <div>
             <div className="eyebrow" style={{ marginBottom: 22 }}>Curado en Asunción · Asesoría profesional</div>
-            <h1 className="h-display" style={{ fontSize: "clamp(40px, 6.6vw, 78px)", fontWeight: 400, margin: "0 0 32px" }}>
+            <h1 className="h-display" style={{ fontSize: "clamp(40px, 6.6vw, 78px)", fontWeight: 400, margin: "0 0 20px" }}>
               Belleza, estética y bienestar en una <em>experiencia premium.</em>
             </h1>
+            <p style={{ color: "var(--c-mute)", fontSize: "clamp(15px, 1.5vw, 18px)", lineHeight: 1.6, margin: "0 0 32px", maxWidth: 540 }}>
+              Productos seleccionados para realzar tu cuidado personal con confianza, elegancia y asesoramiento profesional. Una marca pensada para acompañarte.
+            </p>
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
               <button className="btn btn--primary btn--lg" onClick={() => setRoute("products")}>
                 Ver productos
@@ -53,20 +56,6 @@ const HomeView = () => {
                 <window.Icon name="sparkle" size={16} />
                 Solicitar consulta
               </a>
-            </div>
-
-            <div style={{ marginTop: 48, display: "grid", gap: 14, gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))" }}>
-              {[
-                { i: "sparkle", t: "Asesoría personalizada", s: "Te acompañamos a elegir." },
-                { i: "leaf", t: "Productos seleccionados", s: "Curaduría con criterio." },
-                { i: "shield", t: "Cuidado premium", s: "Embalaje delicado y seguro." }
-              ].map((x) => (
-                <div key={x.t} style={{ background: "rgba(255,255,255,0.7)", backdropFilter: "blur(8px)", border: "1px solid var(--c-border-soft)", borderRadius: 16, padding: "14px 16px" }}>
-                  <window.Icon name={x.i} size={18} color="var(--c-primary)" />
-                  <div style={{ fontFamily: "var(--ff-serif)", fontSize: 15, fontWeight: 500, marginTop: 8 }}>{x.t}</div>
-                  <div style={{ fontSize: 12, color: "var(--c-mute)", marginTop: 2 }}>{x.s}</div>
-                </div>
-              ))}
             </div>
           </div>
 
