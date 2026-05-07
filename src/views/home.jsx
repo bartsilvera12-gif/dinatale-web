@@ -86,22 +86,6 @@ const HomeView = () => {
           </div>
         </div>
 
-        {/* Brand strip */}
-        <div className="container" style={{ marginTop: 20 }}>
-          <div style={{ display: "flex", gap: 40, justifyContent: "space-between", flexWrap: "wrap", padding: "20px 28px", background: "rgba(255,255,255,0.6)", backdropFilter: "blur(10px)", border: "1px solid var(--c-border-soft)", borderRadius: 20 }}>
-            {[
-              { i: "truck", t: "Envíos a todo Paraguay" },
-              { i: "shield", t: "Compra segura" },
-              { i: "wa", t: "Asesoría por WhatsApp" },
-              { i: "gift", t: "Packs y envoltura" }
-            ].map((x) => (
-              <div key={x.t} style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <window.Icon name={x.i} size={18} color={x.i === "wa" ? "#25D366" : "var(--c-primary-deep)"} />
-                <span style={{ fontSize: 13, fontWeight: 500, color: "var(--c-ink-2)" }}>{x.t}</span>
-              </div>
-            ))}
-          </div>
-        </div>
 
         <style>{`
           @media (max-width: 880px) {
