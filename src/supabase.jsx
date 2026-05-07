@@ -281,6 +281,24 @@ const deleteDNFaq = async (id) => {
   if (!res.ok) throw new Error(`DELETE dn_faqs: ${res.status}`);
 };
 
+/* ── Guardar orden de destacados en dn_settings ────────────── */
+const saveDNFeaturedOrder = async (ids) => {
+  const res = await fetch(`${DN_SUPABASE_URL}/rest/v1/dn_settings`, {
+    method: "POST",
+    headers: { ...sbHeaders(true), "Prefer": "resolution=merge-duplicates,return=minimal" },
+    body: JSON.stringify({ key: "featured_order", value: ids })
+  });
+  if (!res.ok) throw new Error(`Save order failed: ${res.status}`);
+};
+
+/* ── Cargar orden de destacados desde dn_settings ──────────── */
+const loadDNFeaturedOrder = async () => {
+  try {
+    const rows = await sbGet("dn_settings", "key=eq.featured_order&select=value");
+    if (rows.length > 0) window.__DN_FEATURED_ORDER = rows[0].value;
+  } catch(e) { /* tabla puede no existir aún */ }
+};
+
 /* ── Verificar credenciales de admin desde Supabase ───────── */
 const checkDNAdminCreds = async (username, password) => {
   const res = await fetch(
@@ -299,7 +317,8 @@ window.__sbLoadDNData = async () => {
     loadDNCategories(),
     loadDNReviews(),
     loadDNArticles(),
-    loadDNFaqs()
+    loadDNFaqs(),
+    loadDNFeaturedOrder()
   ]);
 };
 
@@ -309,5 +328,6 @@ Object.assign(window, {
   createDNProduct, updateDNProduct, deleteDNProduct, updateDNCategory, createDNCategory, deleteDNCategory,
   checkDNAdminCreds, createDNReview, updateDNReview, deleteDNReview, saveDNOrder, loadDNOrders,
   createDNFaq, updateDNFaq, deleteDNFaq,
+  saveDNFeaturedOrder, loadDNFeaturedOrder,
   mapProduct
 });

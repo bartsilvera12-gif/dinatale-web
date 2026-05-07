@@ -487,14 +487,16 @@ const ProductsSection = ({ products, setProducts, loading }) => {
     return [...ordered, ...rest];
   }, [products, featOrder]);
 
-  const moveFeat = (idx, dir) => {
+  const moveFeat = async (idx, dir) => {
     const arr = [...featuredProducts];
     const swapIdx = idx + dir;
     if (swapIdx < 0 || swapIdx >= arr.length) return;
     [arr[idx], arr[swapIdx]] = [arr[swapIdx], arr[idx]];
     const newOrder = arr.map(p => p.id);
     setFeatOrder(newOrder);
+    window.__DN_FEATURED_ORDER = newOrder;
     localStorage.setItem("dn_featured_order", JSON.stringify(newOrder));
+    try { await window.saveDNFeaturedOrder(newOrder); } catch(e) { /* silent */ }
   };
 
   return (

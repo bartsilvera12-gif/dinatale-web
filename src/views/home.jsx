@@ -9,13 +9,11 @@ const HomeView = () => {
   const featProds = React.useMemo(() => {
     const featured = PRODUCTS.filter((p) => p.is_featured);
     const base = featured.length > 0 ? featured : PRODUCTS;
-    try {
-      const order = JSON.parse(localStorage.getItem("dn_featured_order") || "null");
-      if (!order || !order.length) return base;
-      const ordered = order.map((id) => base.find((p) => p.id === id)).filter(Boolean);
-      const rest = base.filter((p) => !order.includes(p.id));
-      return [...ordered, ...rest];
-    } catch { return base; }
+    const order = window.__DN_FEATURED_ORDER || null;
+    if (!order || !order.length) return base;
+    const ordered = order.map((id) => base.find((p) => p.id === id)).filter(Boolean);
+    const rest = base.filter((p) => !order.includes(p.id));
+    return [...ordered, ...rest].length > 0 ? [...ordered, ...rest] : base;
   }, []);
   const featPages = Math.ceil(featProds.length / perPage);
 
