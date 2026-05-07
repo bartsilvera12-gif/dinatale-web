@@ -38,15 +38,12 @@ const HomeView = () => {
         <window.FloralAccent style={{ top: 120, right: 8, transform: "rotate(15deg)" }} size={180} color="#C7A4F4" />
         <window.FloralAccent style={{ bottom: 40, left: "30%" }} size={140} color="#E84DA3" />
 
-        <div className="container dn-hero" style={{ paddingTop: 60, paddingBottom: 40, display: "grid", gap: 60, alignItems: "center", gridTemplateColumns: "minmax(0, 1.05fr) minmax(0, 1fr)" }}>
+        <div className="container dn-hero" style={{ paddingTop: 20, paddingBottom: 40, display: "grid", gap: 60, alignItems: "center", gridTemplateColumns: "minmax(0, 1.05fr) minmax(0, 1fr)" }}>
           <div>
             <div className="eyebrow" style={{ marginBottom: 22 }}>Curado en Asunción · Asesoría profesional</div>
-            <h1 className="h-display" style={{ fontSize: "clamp(40px, 6.6vw, 78px)", fontWeight: 400, margin: "0 0 20px" }}>
+            <h1 className="h-display" style={{ fontSize: "clamp(40px, 6.6vw, 78px)", fontWeight: 400, margin: "0 0 32px" }}>
               Belleza, estética y bienestar en una <em>experiencia premium.</em>
             </h1>
-            <p style={{ color: "var(--c-mute)", fontSize: "clamp(15px, 1.5vw, 18px)", lineHeight: 1.6, margin: "0 0 32px", maxWidth: 540 }}>
-              Productos seleccionados para realzar tu cuidado personal con confianza, elegancia y asesoramiento profesional. Una marca pensada para acompañarte.
-            </p>
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
               <button className="btn btn--primary btn--lg" onClick={() => setRoute("products")}>
                 Ver productos
