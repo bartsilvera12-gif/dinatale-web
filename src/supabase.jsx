@@ -316,7 +316,6 @@ window.__sbLoadDNData = async () => {
     loadDNProducts(),
     loadDNCategories(),
     loadDNReviews(),
-    loadDNArticles(),
     loadDNFaqs(),
     loadDNFeaturedOrder()
   ]);
