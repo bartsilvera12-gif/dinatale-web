@@ -281,22 +281,23 @@ const deleteDNFaq = async (id) => {
   if (!res.ok) throw new Error(`DELETE dn_faqs: ${res.status}`);
 };
 
-/* ── Subir imagen al bucket catalog-images (admin) ─────────── */
+/* ── Subir imagen vía ImgBB (browser-friendly, sin CORS) ────── */
+const IMGBB_KEY = "TU_API_KEY_AQUI"; // → obtené tu key gratis en api.imgbb.com
+
 const uploadDNImage = async (file) => {
-  const ext = file.name.split(".").pop();
-  const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-  const res = await fetch(`${DN_SUPABASE_URL}/storage/v1/object/catalog-images/${fileName}`, {
-    method: "POST",
-    headers: {
-      "apikey": DN_SERVICE_KEY,
-      "Authorization": "Bearer " + DN_SERVICE_KEY,
-      "Content-Type": file.type,
-      "x-upsert": "true"
-    },
-    body: file
+  const base64 = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload  = () => resolve(reader.result.split(",")[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
   });
+  const form = new FormData();
+  form.append("key", IMGBB_KEY);
+  form.append("image", base64);
+  const res = await fetch("https://api.imgbb.com/1/upload", { method: "POST", body: form });
   if (!res.ok) throw new Error(`Upload failed: ${res.status}`);
-  return `${DN_SUPABASE_URL}/storage/v1/object/public/catalog-images/${fileName}`;
+  const data = await res.json();
+  return data.data.url;
 };
 
 /* ── Verificar credenciales de admin desde Supabase ───────── */
