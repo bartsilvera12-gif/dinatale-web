@@ -83,44 +83,6 @@ const HomeView = () => {
               <img src="assets/logosinfondo.png" alt="DI Natale" style={{ width: "100%", height: "100%", objectFit: "contain", filter: "drop-shadow(0 30px 60px rgba(232, 77, 163, 0.35))" }} />
             </div>
 
-            {/* Floating cards */}
-            <div className="card" style={{ position: "absolute", top: "8%", left: "-2%", padding: "12px 14px", display: "flex", alignItems: "center", gap: 10, animation: "floatA 6s ease-in-out infinite" }}>
-              <div style={{ width: 36, height: 36, borderRadius: "50%", background: "var(--grad-brand-soft)", display: "grid", placeItems: "center" }}>
-                <window.Icon name="sparkle" size={16} color="white" />
-              </div>
-              <div>
-                <div style={{ fontFamily: "var(--ff-serif)", fontSize: 14, fontWeight: 600 }}>Glow editorial</div>
-                <div style={{ fontSize: 11, color: "var(--c-mute)" }}>Edición primavera</div>
-              </div>
-            </div>
-
-            <div className="card" style={{ position: "absolute", top: "18%", right: "-4%", padding: "12px 14px", animation: "floatB 7s ease-in-out infinite" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <Stars value={5} />
-                <span style={{ fontSize: 12, fontWeight: 600 }}>4.9</span>
-              </div>
-              <div style={{ fontSize: 11, color: "var(--c-mute)", marginTop: 4 }}>+800 clientas felices</div>
-            </div>
-
-            <div className="card" style={{ position: "absolute", bottom: "12%", left: "-6%", padding: "12px 14px", display: "flex", alignItems: "center", gap: 10, animation: "floatC 8s ease-in-out infinite" }}>
-              <div style={{ width: 36, height: 36, borderRadius: 10, background: "#FFE0EB", display: "grid", placeItems: "center" }}>
-                <window.Icon name="gift" size={16} color="#C8268A" />
-              </div>
-              <div>
-                <div style={{ fontFamily: "var(--ff-serif)", fontSize: 14, fontWeight: 600 }}>Pack regalo</div>
-                <div style={{ fontSize: 11, color: "var(--c-mute)" }}>Envoltura incluida</div>
-              </div>
-            </div>
-
-            <div className="card" style={{ position: "absolute", bottom: "4%", right: "0%", padding: "12px 14px", display: "flex", alignItems: "center", gap: 10, animation: "floatA 9s ease-in-out infinite" }}>
-              <div style={{ width: 36, height: 36, borderRadius: "50%", background: "#25D366", display: "grid", placeItems: "center" }}>
-                <window.Icon name="wa" size={16} color="white" />
-              </div>
-              <div>
-                <div style={{ fontFamily: "var(--ff-serif)", fontSize: 14, fontWeight: 600 }}>Asesoría 1:1</div>
-                <div style={{ fontSize: 11, color: "var(--c-mute)" }}>Resp. en minutos</div>
-              </div>
-            </div>
           </div>
         </div>
 
