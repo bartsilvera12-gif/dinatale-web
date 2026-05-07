@@ -281,6 +281,24 @@ const deleteDNFaq = async (id) => {
   if (!res.ok) throw new Error(`DELETE dn_faqs: ${res.status}`);
 };
 
+/* ── Subir imagen al bucket catalog-images (admin) ─────────── */
+const uploadDNImage = async (file) => {
+  const ext = file.name.split(".").pop();
+  const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+  const res = await fetch(`${DN_SUPABASE_URL}/storage/v1/object/catalog-images/${fileName}`, {
+    method: "POST",
+    headers: {
+      "apikey": DN_SERVICE_KEY,
+      "Authorization": "Bearer " + DN_SERVICE_KEY,
+      "Content-Type": file.type,
+      "x-upsert": "true"
+    },
+    body: file
+  });
+  if (!res.ok) throw new Error(`Upload failed: ${res.status}`);
+  return `${DN_SUPABASE_URL}/storage/v1/object/public/catalog-images/${fileName}`;
+};
+
 /* ── Verificar credenciales de admin desde Supabase ───────── */
 const checkDNAdminCreds = async (username, password) => {
   const res = await fetch(
@@ -309,5 +327,6 @@ Object.assign(window, {
   createDNProduct, updateDNProduct, deleteDNProduct, updateDNCategory, createDNCategory, deleteDNCategory,
   checkDNAdminCreds, createDNReview, updateDNReview, deleteDNReview, saveDNOrder, loadDNOrders,
   createDNFaq, updateDNFaq, deleteDNFaq,
+  uploadDNImage,
   mapProduct
 });

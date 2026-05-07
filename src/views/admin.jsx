@@ -164,6 +164,9 @@ const ProductSearch = ({ value, onChange, placeholder = "Buscar producto..." }) 
 /* ── Gestor de imágenes ────────────────────────────────────── */
 const ImageManager = ({ images, onChange }) => {
   const [newUrl, setNewUrl] = React.useState("");
+  const [uploading, setUploading] = React.useState(false);
+  const fileRef = React.useRef(null);
+
   const add = () => {
     const url = newUrl.trim();
     if (!url) return;
@@ -171,6 +174,22 @@ const ImageManager = ({ images, onChange }) => {
     setNewUrl("");
   };
   const remove = (i) => onChange(images.filter((_, idx) => idx !== i));
+
+  const handleFile = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    e.target.value = "";
+    setUploading(true);
+    try {
+      const url = await window.uploadDNImage(file);
+      onChange([...images, url]);
+    } catch (err) {
+      alert("Error al subir la imagen: " + err.message);
+    } finally {
+      setUploading(false);
+    }
+  };
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -185,17 +204,26 @@ const ImageManager = ({ images, onChange }) => {
             }}>✕</button>
           </div>
         ))}
+        <button type="button" onClick={() => fileRef.current.click()} disabled={uploading}
+          style={{ width: 64, height: 64, borderRadius: 10, border: "1.5px dashed var(--c-border)", background: "var(--c-rose-50)", cursor: uploading ? "wait" : "pointer", display: "grid", placeItems: "center", flexShrink: 0, color: "var(--c-primary)" }}>
+          {uploading
+            ? <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{ animation: "spin 1s linear infinite" }}><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" opacity=".3"/><path d="M21 12a9 9 0 0 0-9-9"/></svg>
+            : <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          }
+        </button>
+        <input ref={fileRef} type="file" accept="image/*" style={{ display: "none" }} onChange={handleFile} />
       </div>
       <div style={{ display: "flex", gap: 8 }}>
         <input type="url" value={newUrl} onChange={(e) => setNewUrl(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && add()}
-          placeholder="Pegar URL de imagen y presionar +"
+          placeholder="O pegar URL de imagen y presionar +"
           style={{ flex: 1, padding: "9px 14px", borderRadius: 10, border: "1.5px solid var(--c-border)", fontSize: 13, outline: "none", fontFamily: "inherit" }} />
         <button onClick={add} style={{
           width: 38, height: 38, borderRadius: 10, background: "var(--grad-brand)", color: "white",
           border: "none", cursor: "pointer", fontSize: 20, display: "grid", placeItems: "center", flexShrink: 0
         }}>+</button>
       </div>
+      <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
     </div>
   );
 };
@@ -602,13 +630,25 @@ const ProductsSection = ({ products, setProducts, loading }) => {
                         <div style={{ minWidth: 0 }}>
                           <span style={{ fontWeight: 500, maxWidth: 150, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", display: "block", fontSize: 13 }}>{p.name}</span>
                           {isEdit && (
-                            <input
-                              type="url"
-                              value={editData.imageUrl}
-                              onChange={(e) => setEditData((d) => ({ ...d, imageUrl: e.target.value }))}
-                              placeholder="URL de imagen..."
-                              style={{ marginTop: 4, width: 180, padding: "4px 8px", border: "1.5px solid var(--c-border)", borderRadius: 7, fontSize: 11, outline: "none", fontFamily: "inherit", color: "var(--c-mute)" }}
-                            />
+                            <div style={{ marginTop: 4, display: "flex", gap: 4, alignItems: "center" }}>
+                              <input
+                                type="url"
+                                value={editData.imageUrl}
+                                onChange={(e) => setEditData((d) => ({ ...d, imageUrl: e.target.value }))}
+                                placeholder="URL de imagen..."
+                                style={{ width: 150, padding: "4px 8px", border: "1.5px solid var(--c-border)", borderRadius: 7, fontSize: 11, outline: "none", fontFamily: "inherit", color: "var(--c-mute)" }}
+                              />
+                              <label title="Subir imagen" style={{ width: 26, height: 26, borderRadius: 7, background: "var(--c-rose-50)", border: "1.5px solid var(--c-border)", cursor: "pointer", display: "grid", placeItems: "center", color: "var(--c-primary)", flexShrink: 0 }}>
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                <input type="file" accept="image/*" style={{ display: "none" }} onChange={async (e) => {
+                                  const file = e.target.files[0]; if (!file) return; e.target.value = "";
+                                  try {
+                                    const url = await window.uploadDNImage(file);
+                                    setEditData((d) => ({ ...d, imageUrl: url }));
+                                  } catch(err) { alert("Error al subir: " + err.message); }
+                                }} />
+                              </label>
+                            </div>
                           )}
                         </div>
                       </div>
