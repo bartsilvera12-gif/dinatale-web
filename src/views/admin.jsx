@@ -402,7 +402,7 @@ const ProductsSection = ({ products, setProducts, loading }) => {
     return matchQ && matchCat;
   });
 
-  const startEdit = (p) => { setEditing(p.id); setEditData({ name: p.name, category: p.category, price: p.price, stock: p.stock, tag: p.tag ?? "", oldPrice: p.oldPrice ?? "", imageUrl: p.images[0] ?? "" }); };
+  const startEdit = (p) => { setEditing(p.id); setEditData({ name: p.name, category: p.category, price: p.price, stock: p.stock, tag: p.tag ?? "", oldPrice: p.oldPrice ?? "", images: [...(p.images || [])] }); setSaveErr(null); };
   const cancelEdit = () => { setEditing(null); setEditData({}); setSaveErr(null); };
 
   const openNew = () => { setNewData({ name: "", category_id: window.CATEGORIES[0]?.id || "", price: "", oldPrice: "", stock: "", tag: "", images: [], description: "" }); setCreateErr(null); setShowNew(true); };
@@ -454,11 +454,12 @@ const ProductsSection = ({ products, setProducts, loading }) => {
   const saveEdit = async (id) => {
     setSaving(true); setSaveErr(null);
     try {
-      const newImages = editData.imageUrl.trim() ? [editData.imageUrl.trim()] : products.find(p => p.id === id).images;
+      const orig = products.find(p => p.id === id);
+      const newImages = editData.images && editData.images.length ? editData.images : orig.images;
       await window.updateDNProduct(id, {
-        name:     editData.name.trim() || products.find(p => p.id === id).name,
+        name:     editData.name.trim() || orig.name,
         category: editData.category,
-        price:    Number(editData.price)    || products.find(p => p.id === id).price,
+        price:    Number(editData.price) || orig.price,
         stock:    Math.max(0, Number(editData.stock) || 0),
         tag:      editData.tag || null,
         oldPrice: editData.oldPrice ? Number(editData.oldPrice) : null,
@@ -635,6 +636,61 @@ const ProductsSection = ({ products, setProducts, loading }) => {
         </div>
       )}
 
+      {/* Modal editar producto */}
+      {editing && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 300, background: "rgba(31,23,32,0.45)", display: "grid", placeItems: "center", padding: 20 }}
+             onClick={() => !saving && cancelEdit()}>
+          <div style={{ background: "white", borderRadius: 20, padding: "36px 32px", maxWidth: 520, width: "100%", boxShadow: "0 20px 60px rgba(0,0,0,0.2)", maxHeight: "90vh", overflowY: "auto" }}
+               onClick={(e) => e.stopPropagation()}>
+            <h3 style={{ fontFamily: "var(--ff-serif)", fontSize: 24, margin: "0 0 24px" }}>Editar producto</h3>
+            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+              {[
+                { label: "Nombre *", key: "name", type: "text" },
+                { label: "Precio *", key: "price", type: "number", placeholder: "195000" },
+                { label: "Precio anterior", key: "oldPrice", type: "number", placeholder: "220000" },
+                { label: "Stock", key: "stock", type: "number", placeholder: "10" },
+              ].map(({ label, key, type, placeholder }) => (
+                <div key={key}>
+                  <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "var(--c-mute)", marginBottom: 5, letterSpacing: ".06em", textTransform: "uppercase" }}>{label}</label>
+                  <input type={type} value={editData[key] ?? ""} onChange={(e) => setEditData((d) => ({ ...d, [key]: e.target.value }))}
+                    placeholder={placeholder}
+                    style={{ width: "100%", boxSizing: "border-box", padding: "10px 14px", borderRadius: 10, border: "1.5px solid var(--c-border)", fontSize: 14, outline: "none", fontFamily: "inherit", transition: "border-color .2s" }}
+                    onFocus={(e) => e.target.style.borderColor = "var(--c-primary)"}
+                    onBlur={(e) => e.target.style.borderColor = "var(--c-border)"} />
+                </div>
+              ))}
+              <div>
+                <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "var(--c-mute)", marginBottom: 5, letterSpacing: ".06em", textTransform: "uppercase" }}>Categoría</label>
+                <AdmSelect value={editData.category || ""} onChange={(e) => setEditData((d) => ({ ...d, category: e.target.value }))}>
+                  {window.CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                </AdmSelect>
+              </div>
+              <div>
+                <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "var(--c-mute)", marginBottom: 5, letterSpacing: ".06em", textTransform: "uppercase" }}>Tag</label>
+                <AdmSelect value={editData.tag || ""} onChange={(e) => setEditData((d) => ({ ...d, tag: e.target.value }))}>
+                  <option value="">Sin tag</option>
+                  <option value="new">Nuevo</option>
+                  <option value="top">Top</option>
+                  <option value="sale">Oferta</option>
+                  <option value="rec">Recomendado</option>
+                </AdmSelect>
+              </div>
+              <div>
+                <label style={{ display: "block", fontSize: 11, fontWeight: 600, color: "var(--c-mute)", marginBottom: 5, letterSpacing: ".06em", textTransform: "uppercase" }}>Imágenes</label>
+                <ImageManager images={editData.images || []} onChange={(imgs) => setEditData((d) => ({ ...d, images: imgs }))} />
+              </div>
+              {saveErr && <p style={{ color: "var(--c-danger)", fontSize: 13, margin: 0 }}>{saveErr}</p>}
+            </div>
+            <div style={{ display: "flex", gap: 10, marginTop: 24 }}>
+              <button onClick={cancelEdit} disabled={saving} className="btn btn--ghost btn--block">Cancelar</button>
+              <button onClick={() => saveEdit(editing)} disabled={saving} className="btn btn--primary btn--block">
+                {saving ? "Guardando..." : "Guardar cambios"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="card" style={{ padding: 0, overflow: "hidden" }}>
         <div style={{ overflowX: "auto" }}>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
@@ -647,72 +703,31 @@ const ProductsSection = ({ products, setProducts, loading }) => {
             </thead>
             <tbody>
               {filtered.map((p) => {
-                const isEdit  = editing === p.id;
                 const isSaved = saved === p.id;
                 return (
-                  <tr key={p.id} style={{ borderBottom: "1px solid var(--c-border-soft)", background: isEdit ? "var(--c-rose-50)" : isSaved ? "#F0FDF4" : "white", transition: "background .35s" }}>
+                  <tr key={p.id} style={{ borderBottom: "1px solid var(--c-border-soft)", background: isSaved ? "#F0FDF4" : "white", transition: "background .35s" }}>
                     <td style={{ padding: "10px 12px" }}>
                       <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
                         <div style={{ width: 38, height: 38, borderRadius: 9, overflow: "hidden", background: "var(--c-rose-50)", flexShrink: 0 }}>
-                          <img src={(isEdit ? editData.imageUrl : null) || p.images[0] || window.DN_IMG_FALLBACK} alt="" onError={window.imgFallback} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                          <img src={p.images[0] || window.DN_IMG_FALLBACK} alt="" onError={window.imgFallback} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                         </div>
-                        <div style={{ minWidth: 0 }}>
-                          {isEdit
-                            ? <input type="text" value={editData.name} onChange={(e) => setEditData((d) => ({ ...d, name: e.target.value }))}
-                                style={{ width: 180, padding: "4px 8px", border: "1.5px solid var(--c-primary)", borderRadius: 7, fontSize: 12, outline: "none", fontFamily: "inherit", fontWeight: 500 }} />
-                            : <span style={{ fontWeight: 500, maxWidth: 150, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", display: "block", fontSize: 13 }}>{p.name}</span>
-                          }
-                          {isEdit && (
-                            <input type="url" value={editData.imageUrl} onChange={(e) => setEditData((d) => ({ ...d, imageUrl: e.target.value }))}
-                              placeholder="URL de imagen..." style={{ marginTop: 4, width: 180, padding: "4px 8px", border: "1.5px solid var(--c-border)", borderRadius: 7, fontSize: 11, outline: "none", fontFamily: "inherit", color: "var(--c-mute)" }} />
-                          )}
-                        </div>
+                        <span style={{ fontWeight: 500, maxWidth: 160, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", display: "block", fontSize: 13 }}>{p.name}</span>
                       </div>
                     </td>
-                    <td style={{ padding: "10px 12px", whiteSpace: "nowrap" }}>
-                      {isEdit
-                        ? <AdmSelect value={editData.category} onChange={(e) => setEditData((d) => ({ ...d, category: e.target.value }))} style={{ minWidth: 140 }}>
-                            {window.CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-                          </AdmSelect>
-                        : <span style={{ color: "var(--c-mute)" }}>{window.CATEGORIES.find((c) => c.id === p.category)?.name ?? p.category}</span>
-                      }
+                    <td style={{ padding: "13px 16px", color: "var(--c-mute)", whiteSpace: "nowrap" }}>
+                      {window.CATEGORIES.find((c) => c.id === p.category)?.name ?? p.category}
                     </td>
-                    <td style={{ padding: "10px 12px", whiteSpace: "nowrap" }}>
-                      {isEdit
-                        ? <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                            <input type="number" value={editData.price} onChange={(e) => setEditData((d) => ({ ...d, price: e.target.value }))}
-                              placeholder="Precio" style={{ width: 108, padding: "5px 8px", border: "1.5px solid var(--c-primary)", borderRadius: 7, fontSize: 12, outline: "none", fontFamily: "inherit" }} />
-                            <input type="number" value={editData.oldPrice} onChange={(e) => setEditData((d) => ({ ...d, oldPrice: e.target.value }))}
-                              placeholder="Ant." style={{ width: 108, padding: "5px 8px", border: "1.5px solid var(--c-border)", borderRadius: 7, fontSize: 11, outline: "none", fontFamily: "inherit", color: "var(--c-mute)" }} />
-                          </div>
-                        : <div>
-                            <span style={{ fontWeight: 600 }}>{fmtGs(p.price)}</span>
-                            {p.oldPrice && <div style={{ fontSize: 11, color: "var(--c-mute)", textDecoration: "line-through" }}>{fmtGs(p.oldPrice)}</div>}
-                          </div>
-                      }
+                    <td style={{ padding: "13px 16px", whiteSpace: "nowrap" }}>
+                      <span style={{ fontWeight: 600 }}>{fmtGs(p.price)}</span>
+                      {p.oldPrice && <div style={{ fontSize: 11, color: "var(--c-mute)", textDecoration: "line-through" }}>{fmtGs(p.oldPrice)}</div>}
                     </td>
-                    <td style={{ padding: "10px 12px" }}>
-                      {isEdit
-                        ? <input type="number" min="0" value={editData.stock} onChange={(e) => setEditData((d) => ({ ...d, stock: e.target.value }))}
-                            style={{ width: 58, padding: "5px 8px", border: "1.5px solid var(--c-primary)", borderRadius: 7, fontSize: 12, outline: "none", fontFamily: "inherit" }} />
-                        : <span style={{ color: p.stock === 0 ? "var(--c-danger)" : p.stock <= 5 ? "var(--c-warn)" : "var(--c-success)", fontWeight: 700 }}>
-                            {p.stock === 0 ? "Sin stock" : p.stock}
-                          </span>
-                      }
+                    <td style={{ padding: "13px 16px" }}>
+                      <span style={{ color: p.stock === 0 ? "var(--c-danger)" : p.stock <= 5 ? "var(--c-warn)" : "var(--c-success)", fontWeight: 700 }}>
+                        {p.stock === 0 ? "Sin stock" : p.stock}
+                      </span>
                     </td>
-                    <td style={{ padding: "10px 12px" }}>
-                      {isEdit
-                        ? <AdmSelect value={editData.tag} onChange={(e) => setEditData((d) => ({ ...d, tag: e.target.value }))} style={{ maxWidth: 110 }}>
-                            <option value="">Sin tag</option>
-                            <option value="top">Top</option>
-                            <option value="new">Nuevo</option>
-                            <option value="sale">Oferta</option>
-                            <option value="rec">Rec.</option>
-                          </AdmSelect>
-                        : <TagPill tag={p.tag} />
-                      }
-                    </td>
-                    <td style={{ padding: "10px 12px", color: "#F59E0B", fontWeight: 700, whiteSpace: "nowrap" }}>
+                    <td style={{ padding: "13px 16px" }}><TagPill tag={p.tag} /></td>
+                    <td style={{ padding: "13px 16px", color: "#F59E0B", fontWeight: 700, whiteSpace: "nowrap" }}>
                       ⭐ {p.rating} <span style={{ color: "var(--c-mute)", fontWeight: 400, fontSize: 12 }}>({p.reviews})</span>
                     </td>
                     <td style={{ padding: "10px 12px", textAlign: "center" }}>
@@ -723,33 +738,17 @@ const ProductsSection = ({ products, setProducts, loading }) => {
                       >⭐</button>
                     </td>
                     <td style={{ padding: "10px 12px", whiteSpace: "nowrap" }}>
-                      {saveErr && isEdit && <div style={{ color: "var(--c-danger)", fontSize: 11, marginBottom: 4 }}>{saveErr}</div>}
-                      {isEdit
-                        ? <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
-                            <button onClick={() => saveEdit(p.id)} disabled={saving} title="Guardar"
-                              style={{ width: 26, height: 26, display: "grid", placeItems: "center", background: "var(--c-primary)", color: "white", border: "none", borderRadius: 7, cursor: saving ? "wait" : "pointer", flexShrink: 0, opacity: saving ? 0.6 : 1 }}>
-                              {saving
-                                ? <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" style={{ animation: "spin 1s linear infinite" }}><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" opacity=".3"/><path d="M21 12a9 9 0 0 0-9-9"/></svg>
-                                : <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                              }
-                            </button>
-                            <button onClick={cancelEdit} title="Cancelar"
-                              style={{ width: 26, height: 26, display: "grid", placeItems: "center", background: "var(--c-rose-50)", color: "var(--c-mute)", border: "1px solid var(--c-border)", borderRadius: 7, cursor: "pointer", flexShrink: 0 }}>
-                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                            </button>
-                          </div>
-                        : <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
-                            {isSaved && <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--c-success)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>}
-                            <button onClick={() => startEdit(p)} title="Editar"
-                              style={{ width: 26, height: 26, display: "grid", placeItems: "center", background: "var(--c-rose-50)", color: "var(--c-primary-deep)", border: "1px solid var(--c-border)", borderRadius: 7, cursor: "pointer", flexShrink: 0 }}>
-                              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                            </button>
-                            <button onClick={() => setConfirmDelete(p)} title="Eliminar"
-                              style={{ width: 26, height: 26, display: "grid", placeItems: "center", background: "#FEE2E2", color: "#991B1B", border: "none", borderRadius: 7, cursor: "pointer", flexShrink: 0 }}>
-                              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-                            </button>
-                          </div>
-                      }
+                      <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
+                        {isSaved && <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--c-success)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>}
+                        <button onClick={() => startEdit(p)} title="Editar"
+                          style={{ width: 26, height: 26, display: "grid", placeItems: "center", background: "var(--c-rose-50)", color: "var(--c-primary-deep)", border: "1px solid var(--c-border)", borderRadius: 7, cursor: "pointer", flexShrink: 0 }}>
+                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        </button>
+                        <button onClick={() => setConfirmDelete(p)} title="Eliminar"
+                          style={{ width: 26, height: 26, display: "grid", placeItems: "center", background: "#FEE2E2", color: "#991B1B", border: "none", borderRadius: 7, cursor: "pointer", flexShrink: 0 }}>
+                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );
@@ -763,7 +762,6 @@ const ProductsSection = ({ products, setProducts, loading }) => {
           )}
         </div>
       </div>
-      <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
     </div>
   );
 };
