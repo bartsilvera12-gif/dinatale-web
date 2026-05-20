@@ -1140,83 +1140,6 @@ const FAQsSection = () => {
   );
 };
 
-/* ── Pedidos ────────────────────────────────────────────────── */
-const OrdersSection = () => {
-  const [orders, setOrders] = React.useState([]);
-  const [loading, setLoading] = React.useState(true);
-
-  React.useEffect(() => {
-    window.loadDNOrders().then((data) => { setOrders(data); setLoading(false); });
-  }, []);
-
-  const statusColor = (s) => ({
-    pending:    { bg: "#FEF3C7", color: "#92400E", label: "Pendiente"   },
-    confirmed:  { bg: "#DCFCE7", color: "#166534", label: "Confirmado"  },
-    shipped:    { bg: "#DBEAFE", color: "#1E40AF", label: "Enviado"     },
-    delivered:  { bg: "#D1FAE5", color: "#065F46", label: "Entregado"   },
-    cancelled:  { bg: "#FEE2E2", color: "#991B1B", label: "Cancelado"   },
-  })[s] || { bg: "#F3F4F6", color: "#374151", label: s };
-
-  if (loading) return (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: 80, color: "var(--c-mute)" }}>
-      Cargando pedidos desde Supabase...
-    </div>
-  );
-
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
-      <div>
-        <h2 style={{ fontFamily: "var(--ff-serif)", fontSize: 28, margin: "0 0 4px" }}>Pedidos</h2>
-        <p style={{ color: "var(--c-mute)", fontSize: 14, margin: 0 }}>{orders.length} pedidos registrados.</p>
-      </div>
-
-      {orders.length === 0 ? (
-        <div className="card" style={{ padding: "48px 24px", textAlign: "center", color: "var(--c-mute)" }}>
-          <div style={{ fontSize: 40, marginBottom: 12 }}>📦</div>
-          <p style={{ margin: 0 }}>Aún no hay pedidos registrados.</p>
-          <p style={{ fontSize: 13, marginTop: 6 }}>Los pedidos del checkout se guardarán aquí automáticamente.</p>
-        </div>
-      ) : (
-        <div className="card" style={{ padding: 0, overflow: "hidden" }}>
-          <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
-              <thead>
-                <tr style={{ background: "var(--c-rose-50)", borderBottom: "1.5px solid var(--c-border-soft)" }}>
-                  {["Cliente", "Contacto", "Pago", "Total", "Estado", "Fecha"].map((h, i) => (
-                    <th key={i} style={{ padding: "13px 16px", textAlign: "left", fontWeight: 600, fontSize: 11.5, color: "var(--c-mute)", letterSpacing: ".06em", whiteSpace: "nowrap" }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {orders.map((o) => {
-                  const st = statusColor(o.order_status);
-                  return (
-                    <tr key={o.id} style={{ borderBottom: "1px solid var(--c-border-soft)" }}>
-                      <td style={{ padding: "13px 16px", fontWeight: 500 }}>{o.customer_name}</td>
-                      <td style={{ padding: "13px 16px", color: "var(--c-mute)" }}>
-                        <div>{o.customer_phone}</div>
-                        <div style={{ fontSize: 11 }}>{o.customer_email}</div>
-                      </td>
-                      <td style={{ padding: "13px 16px", color: "var(--c-mute)" }}>{o.payment_method}</td>
-                      <td style={{ padding: "13px 16px", fontWeight: 700 }}>{o.total ? fmtGs(o.total) : "—"}</td>
-                      <td style={{ padding: "13px 16px" }}>
-                        <span style={{ background: st.bg, color: st.color, fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 99 }}>{st.label}</span>
-                      </td>
-                      <td style={{ padding: "13px 16px", color: "var(--c-mute)", fontSize: 12 }}>
-                        {new Date(o.created_at).toLocaleDateString("es-PY")}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
-
 /* ── Categorías ────────────────────────────────────────────── */
 const CategoriesSection = () => {
   const [cats, setCats] = React.useState([...window.CATEGORIES]);
@@ -1419,9 +1342,8 @@ const SECTIONS = [
   { id: "dashboard",  label: "Dashboard",   icon: "sparkle" },
   { id: "products",   label: "Productos",   icon: "cart"    },
   { id: "categories", label: "Categorías",  icon: "leaf"    },
-  { id: "orders",     label: "Pedidos",     icon: "truck"   },
   { id: "reviews",    label: "Reseñas",     icon: "star"    },
-{ id: "faqs",       label: "FAQs",        icon: "shield"  },
+  { id: "faqs",       label: "FAQs",        icon: "shield"  },
 ];
 
 /* ── Admin Panel Shell ──────────────────────────────────────── */
@@ -1521,7 +1443,6 @@ const AdminPanel = ({ onLogout }) => {
         {section === "dashboard"  && <Dashboard products={products} reviews={reviews} />}
         {section === "products"   && <ProductsSection products={products} setProducts={setProducts} loading={productsLoading} />}
         {section === "categories" && <CategoriesSection />}
-        {section === "orders"     && <OrdersSection />}
         {section === "reviews"    && <ReviewsSection reviews={reviews} />}
 {section === "faqs"       && <FAQsSection />}
       </main>
