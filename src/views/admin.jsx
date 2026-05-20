@@ -402,7 +402,7 @@ const ProductsSection = ({ products, setProducts, loading }) => {
     return matchQ && matchCat;
   });
 
-  const startEdit = (p) => { setEditing(p.id); setEditData({ price: p.price, stock: p.stock, tag: p.tag ?? "", oldPrice: p.oldPrice ?? "", imageUrl: p.images[0] ?? "" }); };
+  const startEdit = (p) => { setEditing(p.id); setEditData({ name: p.name, category: p.category, price: p.price, stock: p.stock, tag: p.tag ?? "", oldPrice: p.oldPrice ?? "", imageUrl: p.images[0] ?? "" }); };
   const cancelEdit = () => { setEditing(null); setEditData({}); setSaveErr(null); };
 
   const openNew = () => { setNewData({ name: "", category_id: window.CATEGORIES[0]?.id || "", price: "", oldPrice: "", stock: "", tag: "", images: [], description: "" }); setCreateErr(null); setShowNew(true); };
@@ -456,6 +456,8 @@ const ProductsSection = ({ products, setProducts, loading }) => {
     try {
       const newImages = editData.imageUrl.trim() ? [editData.imageUrl.trim()] : products.find(p => p.id === id).images;
       await window.updateDNProduct(id, {
+        name:     editData.name.trim() || products.find(p => p.id === id).name,
+        category: editData.category,
         price:    Number(editData.price)    || products.find(p => p.id === id).price,
         stock:    Math.max(0, Number(editData.stock) || 0),
         tag:      editData.tag || null,
@@ -463,7 +465,7 @@ const ProductsSection = ({ products, setProducts, loading }) => {
         images:   newImages
       });
       const updated = products.map((p) => p.id === id
-        ? { ...p, price: Number(editData.price) || p.price, stock: Math.max(0, Number(editData.stock) || 0), tag: editData.tag || null, oldPrice: editData.oldPrice ? Number(editData.oldPrice) : null, images: newImages }
+        ? { ...p, name: editData.name.trim() || p.name, category: editData.category, price: Number(editData.price) || p.price, stock: Math.max(0, Number(editData.stock) || 0), tag: editData.tag || null, oldPrice: editData.oldPrice ? Number(editData.oldPrice) : null, images: newImages }
         : p
       );
       setProducts(updated);
@@ -655,21 +657,25 @@ const ProductsSection = ({ products, setProducts, loading }) => {
                           <img src={(isEdit ? editData.imageUrl : null) || p.images[0] || window.DN_IMG_FALLBACK} alt="" onError={window.imgFallback} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                         </div>
                         <div style={{ minWidth: 0 }}>
-                          <span style={{ fontWeight: 500, maxWidth: 150, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", display: "block", fontSize: 13 }}>{p.name}</span>
+                          {isEdit
+                            ? <input type="text" value={editData.name} onChange={(e) => setEditData((d) => ({ ...d, name: e.target.value }))}
+                                style={{ width: 180, padding: "4px 8px", border: "1.5px solid var(--c-primary)", borderRadius: 7, fontSize: 12, outline: "none", fontFamily: "inherit", fontWeight: 500 }} />
+                            : <span style={{ fontWeight: 500, maxWidth: 150, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", display: "block", fontSize: 13 }}>{p.name}</span>
+                          }
                           {isEdit && (
-                            <input
-                              type="url"
-                              value={editData.imageUrl}
-                              onChange={(e) => setEditData((d) => ({ ...d, imageUrl: e.target.value }))}
-                              placeholder="URL de imagen..."
-                              style={{ marginTop: 4, width: 180, padding: "4px 8px", border: "1.5px solid var(--c-border)", borderRadius: 7, fontSize: 11, outline: "none", fontFamily: "inherit", color: "var(--c-mute)" }}
-                            />
+                            <input type="url" value={editData.imageUrl} onChange={(e) => setEditData((d) => ({ ...d, imageUrl: e.target.value }))}
+                              placeholder="URL de imagen..." style={{ marginTop: 4, width: 180, padding: "4px 8px", border: "1.5px solid var(--c-border)", borderRadius: 7, fontSize: 11, outline: "none", fontFamily: "inherit", color: "var(--c-mute)" }} />
                           )}
                         </div>
                       </div>
                     </td>
-                    <td style={{ padding: "13px 16px", color: "var(--c-mute)", whiteSpace: "nowrap" }}>
-                      {window.CATEGORIES.find((c) => c.id === p.category)?.name ?? p.category}
+                    <td style={{ padding: "10px 12px", whiteSpace: "nowrap" }}>
+                      {isEdit
+                        ? <AdmSelect value={editData.category} onChange={(e) => setEditData((d) => ({ ...d, category: e.target.value }))} style={{ minWidth: 140 }}>
+                            {window.CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                          </AdmSelect>
+                        : <span style={{ color: "var(--c-mute)" }}>{window.CATEGORIES.find((c) => c.id === p.category)?.name ?? p.category}</span>
+                      }
                     </td>
                     <td style={{ padding: "10px 12px", whiteSpace: "nowrap" }}>
                       {isEdit

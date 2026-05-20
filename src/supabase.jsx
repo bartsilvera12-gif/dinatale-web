@@ -135,13 +135,15 @@ const deleteDNProduct = async (id) => {
 };
 
 /* ── Actualizar producto en Supabase (admin) ───────────────── */
-const updateDNProduct = async (id, { price, stock, tag, oldPrice, images, is_featured }) => {
+const updateDNProduct = async (id, { name, category, price, stock, tag, oldPrice, images, is_featured }) => {
   const body = { updated_at: new Date().toISOString() };
-  if (price      !== undefined) body.price      = price;
-  if (stock      !== undefined) body.stock      = stock;
-  if (tag        !== undefined) body.tag        = tag || null;
-  if (oldPrice   !== undefined) body.old_price  = oldPrice || null;
-  if (images     !== undefined) body.images     = images;
+  if (name       !== undefined) body.name        = name;
+  if (category   !== undefined) body.category_id = category;
+  if (price      !== undefined) body.price       = price;
+  if (stock      !== undefined) body.stock       = stock;
+  if (tag        !== undefined) body.tag         = tag || null;
+  if (oldPrice   !== undefined) body.old_price   = oldPrice || null;
+  if (images     !== undefined) body.images      = images;
   if (is_featured !== undefined) body.is_featured = is_featured;
   return sbPatch("dn_products", `id=eq.${id}`, body);
 };
